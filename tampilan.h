@@ -6,5 +6,7 @@ using namespace std;
 
 void tampilkan_menu_login();
 void tampilkan_menu_utama(string role);
+void loading();
+void clearScreen();
 
 #endif
