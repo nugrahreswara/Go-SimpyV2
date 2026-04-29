@@ -48,4 +48,11 @@ const char* getCurrentUser(); // mengembalikan username yang sedang login
 void setCurrentUser(const char* username);
 void setLoginStatus(bool status);
 
+// === PEMESANAN (TRANSAKSI) ===
+void inisialisasiFileCSV();         // buat file transaksi.csv jika belum ada
+void pesanOjek();                   // customer memesan ojek
+void lihatHistoriCustomer();        // customer melihat histori pemesanan
+void lihatPendapatanDriver();       // driver melihat pendapatan
+void lihatSemuaTransaksiAdmin();    // admin melihat semua transaksi
+
 #endif
