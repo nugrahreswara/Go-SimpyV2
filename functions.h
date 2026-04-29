@@ -40,4 +40,12 @@ void tampilkanSemuaUser();
 // Fungsi tambahan untuk mendapatkan data user berdasarkan username (opsional)
 User* cariUserByUsername(const char* username);
 
+// === AUTENTIKASI ===
+void login();
+void logout();
+bool isLogin();
+const char* getCurrentUser(); // mengembalikan username yang sedang login
+void setCurrentUser(const char* username);
+void setLoginStatus(bool status);
+
 #endif
