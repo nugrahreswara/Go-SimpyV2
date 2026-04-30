@@ -1,4 +1,8 @@
 #include "functions.h"
+#include <iostream>
+#include <iomanip>
+#include <windows.h>
+using namespace std;
 
 // Definisi variabel global (karena di akun.h hanya extern)
 User daftarUser[MAX_USER];
@@ -962,4 +966,77 @@ void lihatSemuaTransaksiAdmin() {
     in.close();
     std::cin.ignore();
     std::cin.get();
+}
+
+
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+// ================= HEADER =================
+void tampilHeader(string judul) {
+    clearScreen();
+    setColor(11); // cyan
+
+    cout << "========================================\n";
+
+    int spasi = (40 - judul.length()) / 2;
+    if (spasi < 0) spasi = 0;
+
+    cout << string(spasi, ' ') << judul << endl;
+
+    cout << "========================================\n";
+
+    setColor(7); // normal
+}
+
+// ================= LOADING TITIK =================
+void loading(string teks = "Loading") {
+    setColor(14); // kuning
+    cout << teks;
+
+    for (int i = 0; i < 3; i++) {
+        Sleep(400);
+        cout << ".";
+    }
+
+    cout << endl;
+    setColor(7);
+}
+
+// ================= LOADING BAR =================
+void loadingBar() {
+    setColor(10); // hijau
+    cout << "Loading: ";
+
+    for (int i = 0; i <= 20; i++) {
+        cout << char(219); // █
+        Sleep(80);
+    }
+
+    cout << " Selesai!\n";
+    setColor(7);
+    Sleep(300);
+}
+
+// ================= INPUT MENU =================
+int inputMenu(int min, int max) {
+    int pilih;
+    cout << "\nPilih menu [" << min << "-" << max << "] : ";
+    cin >> pilih;
+
+    if(cin.fail() || pilih < min || pilih > max){
+        cin.clear();
+        cin.ignore(1000, '\n');
+        return -1;
+    }
+
+    return pilih;
+}
+
+// ================= PAUSE =================
+void pause() {
+    cout << "\nTekan ENTER untuk lanjut...";
+    cin.ignore();
+    cin.get();
 }
