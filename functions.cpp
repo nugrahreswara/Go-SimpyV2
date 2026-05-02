@@ -1,8 +1,4 @@
 #include "functions.h"
-#include <iostream>
-#include <iomanip>
-#include <windows.h>
-using namespace std;
 
 // Definisi variabel global (karena di akun.h hanya extern)
 User daftarUser[MAX_USER];
@@ -21,7 +17,46 @@ void clearScreen() {
 #endif
 }
 
+void inputAman(char* buffer, int maxLen) {
+    std::cin.getline(buffer, maxLen);
+
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        buffer[maxLen - 1] = '\0';
+    }
+}
+
 // === VALIDASI ===
+bool inputFloat(float& hasil) {
+    char buffer[20];
+    inputAman(buffer, 20);
+
+    if (strlen(buffer) == 0) {
+        return false;
+    }
+
+    bool adaTitik = false;
+    int digitCount = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (buffer[i] == '.') {
+            if (adaTitik) return false;
+            adaTitik = true;
+        } else if (buffer[i] >= '0' && buffer[i] <= '9') {
+            digitCount++;
+        } else {
+            return false;
+        }
+    }
+
+    if (digitCount == 0) {
+        return false;
+    }
+
+    hasil = atof(buffer);
+    return true;
+}
+
 bool usernameTerdaftar(const char* username) {
     for (int i = 0; i < jumlahUser; i++) {
         if (strcmp(daftarUser[i].username, username) == 0) {
@@ -74,15 +109,34 @@ bool validasiUsername(const char* username) {
 }
 
 bool validasiNomorTelepon(const char* nomor) {
-    int len = strlen(nomor);
-    if (len < 10) {
+    int panjangNomor = strlen(nomor);
+
+    if (panjangNomor < 10 || panjangNomor > 15) {
         return false;
     }
 
-    for (int i = 0; i < len; i++) {
+    if (nomor[0] != '0' && nomor[0] != '8') {
+        return false;
+    }
+
+    bool angkaMuncul[10] = {false, false, false, false, false, false, false, false, false, false};
+    int jumlahAngkaUnik = 0;
+
+    for (int i = 0; i < panjangNomor; i++) {
         if (nomor[i] < '0' || nomor[i] > '9') {
             return false;
         }
+        
+        int nilaiAngka = nomor[i] - '0'; 
+        
+        if (angkaMuncul[nilaiAngka] == false) {
+            angkaMuncul[nilaiAngka] = true;
+            jumlahAngkaUnik++;
+        }
+    }
+
+    if (jumlahAngkaUnik < 4) {
+        return false;
     }
 
     return true;
@@ -94,43 +148,80 @@ bool validasiEmail(const char* email) {
         return true;
     }
 
-    bool at = false, dot = false;
-    int len = strlen(email);
+    int panjangEmail = strlen(email);
+    int posisiAt = -1; 
+    int jumlahAt = 0;
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < panjangEmail; i++) {
         if (email[i] == '@') {
-            at = true;
-        }
-
-        if (at && email[i] == '.') {
-            dot = true;
+            posisiAt = i;
+            jumlahAt++;
         }
     }
 
-    if (!at || !dot) {
+    if (jumlahAt != 1 || posisiAt == 0 || posisiAt == panjangEmail - 1) {
         return false;
     }
 
-    // local part tidak boleh mengandung titik
-    for (int i = 0; i < len && email[i] != '@'; i++) {
-        if (email[i] == '.') {
+    if (email[0] == '.' || email[posisiAt - 1] == '.') {
+        return false;
+    }
+    
+    for (int i = 0; i < posisiAt; i++) {
+        if (email[i] == '.' && email[i + 1] == '.') {
             return false;
         }
     }
 
-    return true;
+    bool adaTitikDiDomain = false;
+    for (int i = posisiAt + 1; i < panjangEmail; i++) {
+        if (email[i] == '.') {
+            if (i == posisiAt + 1 || i == panjangEmail - 1) {
+                return false;
+            }
+            if (email[i - 1] == '.') {
+                return false;
+            }
+            adaTitikDiDomain = true;
+        }
+    }
+
+    return adaTitikDiDomain;
 }
 
 bool validasiNama(const char* nama) {
-    if (strlen(nama) == 0) {
+    int len = strlen(nama);
+
+    if (len < 3 || len > 50) {
         return false;
     }
 
-    for (int i = 0; nama[i]; i++) {
+    if (nama[0] == ' ' || nama[len - 1] == ' ') {
+        return false;
+    }
+
+    for (int i = 0; i < len - 1; i++) {
+        if (nama[i] == ' ' && nama[i + 1] == ' ') {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < len; i++) {
         char c = nama[i];
         if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ')) {
             return false;
         }
+    }
+
+    bool adaSpasi = false;
+    for (int i = 1; i < len - 1; i++) {
+        if (nama[i] == ' ') {
+            adaSpasi = true;
+            break;
+        }
+    }
+    if (!adaSpasi) {
+        return false;
     }
 
     return true;
@@ -151,71 +242,69 @@ void buatAkunRegistrasi(const char* role) {
     baru.aktif = true;
     strcpy(baru.role, role);
 
-    std::cout << "Ketentuan Username: " <<
-    std::endl << "1. Panjang 3-15 karakter" <<
-    std::endl << "2. Dapat mengandung huruf, angka, _ dan -" <<
-    std:: endl << "3. Wajib diawali dengan huruf" <<
-    std::endl << "Masukkan username: ";
-    std::cin >> baru.username;
+    std::cout << "Ketentuan Username: "
+    << std::endl << "1. Panjang 3-15 karakter"
+    << std::endl << "2. Dapat mengandung huruf, angka, _ dan -"
+    << std::endl << "3. Wajib diawali dengan huruf"
+    << std::endl << "Masukkan username: ";
+    inputAman(baru.username, 20);
 
-    // Validasi inputan username
     while (!validasiUsername(baru.username) || usernameTerdaftar(baru.username)) {
         if (usernameTerdaftar(baru.username)) {
             std::cout << "Username sudah ada." << std::endl;
         } else {
             std::cout << "Username tidak valid." << std::endl;
         }
-
         std::cout << "Masukkan username lagi: ";
-        std::cin >> baru.username;
+        inputAman(baru.username, 20);
     }
 
-    // Password
-    std::cout << "Password: ";
-    std::cin >> baru.password;
+    std::cout << "Ketentuan Password:" << std::endl
+    << "1. Panjang 8-20 karakter" << std::endl
+    << "2. Mengandung huruf besar (A-Z)" << std::endl
+    << "3. Mengandung huruf kecil (a-z)" << std::endl
+    << "4. Mengandung angka (0-9)" << std::endl
+    << "5. Mengandung simbol (! @ # $ % _ - .)" << std::endl
+    << "Password: ";
+    inputAman(baru.password, 20);
+    while (!validasiPassword(baru.password)) {
+        std::cout << "Password tidak memenuhi ketentuan. Masukkan lagi: ";
+        inputAman(baru.password, 20);
+    }
 
-    // Nama Lengkap
-    std::cin.ignore();
-    std::cout << "Nama lengkap: ";
+    std::cout << "Ketentuan Nama Lengkap:" << std::endl
+    << "1. Minimal 3 karakter, maksimal 50 karakter" << std::endl
+    << "2. Harus terdiri dari minimal 2 kata" << std::endl
+    << "3. Hanya boleh huruf dan spasi" << std::endl
+    << "4. Tidak boleh diawali/diakhiri spasi atau spasi ganda" << std::endl
+    << "Nama lengkap: ";
     std::cin.getline(baru.namaLengkap, 50);
-
-    // Validasi inputan Nama Lengkap
     while (!validasiNama(baru.namaLengkap)) {
-        std::cout << "Nama hanya boleh huruf dan spasi. Masukkan lagi: ";
+        std::cout << "Nama tidak valid. Masukkan lagi: ";
         std::cin.getline(baru.namaLengkap, 50);
     }
 
-    // Nomor Telepon
     std::cout << "Nomor telepon (min 10 digit angka): ";
-    std::cin >> baru.nomorTelepon;
-
-    // Validasi inputan Nomor Telepon
+    inputAman(baru.nomorTelepon, 20);
     while (!validasiNomorTelepon(baru.nomorTelepon) || nomorTerdaftar(baru.nomorTelepon)) {
         if (nomorTerdaftar(baru.nomorTelepon)) {
             std::cout << "Nomor sudah terdaftar." << std::endl;
         } else {
             std::cout << "Nomor tidak valid." << std::endl;
-            std::cout << "Masukkan nomor telepon lagi: ";
-            std::cin >> baru.nomorTelepon;
         }
+        std::cout << "Masukkan nomor telepon lagi: ";
+        inputAman(baru.nomorTelepon, 20);
     }
 
-    // Alamat E-Mail
-    std::cin.ignore();
     std::cout << "Alamat email (opsional, tekan Enter jika tidak ada): ";
     std::cin.getline(baru.alamatEmail, 50);
 
-    // Alamat E-Mail opsional
     if (strlen(baru.alamatEmail) > 0) {
-        // Validasi inputan Alamat E-Mail
         while (!validasiEmail(baru.alamatEmail)) {
             std::cout << "Email tidak valid. Masukkan lagi (atau kosongkan): ";
             std::cin.getline(baru.alamatEmail, 50);
-            if (strlen(baru.alamatEmail) == 0) {
-                break;
-            }
+            if (strlen(baru.alamatEmail) == 0) break;
         }
-
         if (strlen(baru.alamatEmail) > 0 && emailTerdaftar(baru.alamatEmail)) {
             std::cout << "Email sudah terdaftar. Registrasi dibatalkan." << std::endl;
             std::cin.ignore();
@@ -224,13 +313,15 @@ void buatAkunRegistrasi(const char* role) {
         }
     }
 
-    // Alamat
-    std::cout << "Alamat: ";
+    std::cout << "Ketentuan Alamat:" << std::endl
+    << "1. Minimal 5 karakter" << std::endl
+    << "2. Harus mengandung minimal 1 huruf" << std::endl
+    << "3. Karakter yang diizinkan: huruf, angka, spasi, . , - / ( )" << std::endl
+    << "Alamat: ";
     std::cin.getline(baru.alamat, 100);
 
-    // Alamat wajib diisi
-    while (strlen(baru.alamat) == 0) {
-        std::cout << "Alamat tidak boleh kosong. Masukkan alamat: ";
+    while (!validasiAlamat(baru.alamat)) {
+        std::cout << "Alamat tidak valid. Masukkan lagi: ";
         std::cin.getline(baru.alamat, 100);
     }
 
@@ -263,22 +354,34 @@ void buatAkunOlehAdmin() {
         std::cin >> baru.role;
     }
 
-    // Username
-    std::cout << "Username: ";
-    std::cin >> baru.username;
-    while (!validasiUsername(baru.username) || usernameTerdaftar(baru.username)) {
-        if (usernameTerdaftar(baru.username)) {
-            std::cout << "Username sudah ada." << std::endl;
-        } else {
-            std::cout << "Username tidak valid." << std::endl;
-            std::cout << "Masukkan username lagi: ";
-            std::cin >> baru.username;
-        }
+    // Nama lengkap
+    std::cout << "Ketentuan Nama Lengkap:" << std::endl
+    << "1. Minimal 3 karakter, maksimal 50 karakter" << std::endl
+    << "2. Harus terdiri dari minimal 2 kata" << std::endl
+    << "3. Hanya boleh huruf dan spasi" << std::endl
+    << "4. Tidak boleh diawali/diakhiri spasi atau spasi ganda" << std::endl
+    << "Nama lengkap: ";
+    std::cin.getline(baru.namaLengkap, 50);
+    while (!validasiNama(baru.namaLengkap)) {
+        std::cout << "Nama tidak valid. Masukkan lagi: ";
+        std::cin.getline(baru.namaLengkap, 50);
     }
 
     // Password
+    std::cout << "Ketentuan Password:" << std::endl;
+    std::cout << "1. Panjang 8-20 karakter" << std::endl;
+    std::cout << "2. Mengandung huruf besar (A-Z)" << std::endl;
+    std::cout << "3. Mengandung huruf kecil (a-z)" << std::endl;
+    std::cout << "4. Mengandung angka (0-9)" << std::endl;
+    std::cout << "5. Mengandung simbol (! @ # $ % _ - .)" << std::endl;
+    std::cout << "6. Tidak boleh mengandung spasi" << std::endl;
     std::cout << "Password: ";
     std::cin >> baru.password;
+
+    while (!validasiPassword(baru.password)) {
+        std::cout << "Password tidak memenuhi ketentuan. Masukkan lagi: ";
+        std::cin >> baru.password;
+}
 
     // Nama Lengkap
     std::cin.ignore();
@@ -313,7 +416,6 @@ void buatAkunOlehAdmin() {
 
     // Alamat E-Mail opsional
     if (strlen(baru.alamatEmail) > 0) {
-        // Validasi inputan Alamat E-Mail
         while (!validasiEmail(baru.alamatEmail)) {
             std::cout << "Alamat E-Mail tidak valid. Masukkan lagi (atau kosongkan): ";
             std::cin.getline(baru.alamatEmail, 50);
@@ -334,6 +436,10 @@ void buatAkunOlehAdmin() {
     std::cout << "Alamat: ";
     std::cin.getline(baru.alamat, 100);
 
+    while (!validasiAlamat(baru.alamat)) {
+        std::cout << "Alamat tidak valid. Masukkan lagi: ";
+        std::cin.getline(baru.alamat, 100);
+}
     daftarUser[jumlahUser++] = baru;
     std::cout << "Akun berhasil dibuat." << std::endl;
     std::cin.ignore();
@@ -377,17 +483,11 @@ void editProfilSendiri() {
     std::cout << "Username baru (" << u->username << "): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-
-        // Cek apakah username baru sama dengan yang lama
         if (strcmp(input, u->username) == 0) {
-        } 
-
-        else if (validasiUsername(input) && !usernameTerdaftar(input)) {
+        } else if (validasiUsername(input) && !usernameTerdaftar(input)) {
             strcpy(u->username, input);
-            setCurrentUser(input); // update current user
-        }
-
-        else {
+            setCurrentUser(input);
+        } else {
             std::cout << "Username tidak valid/terdaftar." << std::endl;
         }
     }
@@ -397,13 +497,9 @@ void editProfilSendiri() {
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
         if (strcmp(input, u->nomorTelepon) == 0) {
-        }
-
-        else if (validasiNomorTelepon(input) && !nomorTerdaftar(input)) {
+        } else if (validasiNomorTelepon(input) && !nomorTerdaftar(input)) {
             strcpy(u->nomorTelepon, input);
-        }
-
-        else {
+        } else {
             std::cout << "Nomor tidak valid/terdaftar." << std::endl;
         }
     }
@@ -413,13 +509,9 @@ void editProfilSendiri() {
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
         if (strcmp(input, u->alamatEmail) == 0) {
-        }
-
-        else if (validasiEmail(input) && !emailTerdaftar(input)) {
+        } else if (validasiEmail(input) && !emailTerdaftar(input)) {
             strcpy(u->alamatEmail, input);
-        }
-
-        else {
+        } else {
             std::cout << "Alamat E-Mail tidak valid atau sudah terdaftar." << std::endl;
         }
     }
@@ -428,14 +520,28 @@ void editProfilSendiri() {
     std::cout << "Alamat (" << u->alamat << "): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-        strcpy(u->alamat, input);
+        while (!validasiAlamat(input)) {
+            std::cout << "Alamat tidak valid. Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0) {
+            strcpy(u->alamat, input);
+        }
     }
 
     // Password
     std::cout << "Password baru (kosongkan jika tidak ganti): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-        strcpy(u->password, input);
+        while (!validasiPassword(input)) {
+            std::cout << "Password tidak memenuhi ketentuan. Masukkan lagi: ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0) {
+            strcpy(u->password, input);
+        }
     }
 
     std::cout << "Profil berhasil diupdate." << std::endl;
@@ -456,7 +562,7 @@ void editProfilOlehAdmin() {
     tampilkanSemuaUser();
     char username[20];
     std::cout << "Masukkan username akun yang akan diedit: ";
-    std::cin >> username;
+    inputAman(username, 20);
     int idx = -1;
     for (int i = 0; i < jumlahUser; i++) {
         if (strcmp(daftarUser[i].username, username) == 0 && daftarUser[i].aktif) {
@@ -515,8 +621,15 @@ void editProfilOlehAdmin() {
     std::cout << "Alamat (" << u->alamat << "): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-        strcpy(u->alamat, input);
-    }
+        while (!validasiAlamat(input)) {
+            std::cout << "Alamat tidak valid. Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0) {
+            strcpy(u->alamat, input);
+        }
+}
 
     // Role
     std::cout << "Role baru (" << u->role << "): ";
@@ -529,8 +642,15 @@ void editProfilOlehAdmin() {
     std::cout << "Password baru (kosongkan jika tidak ganti): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
+        while (!validasiPassword(input)) {
+            std::cout << "Password tidak memenuhi ketentuan. Masukkan lagi: ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+            }
+    if (strlen(input) > 0) {
         strcpy(u->password, input);
-    }
+        }
+}
 
     std::cout << "Akun berhasil diupdate." << std::endl;
     std::cin.ignore();
@@ -551,7 +671,7 @@ void hapusAkunOlehAdmin() {
     tampilkanSemuaUser();
     char username[20];
     std::cout << "Masukkan username akun yang akan dihapus: ";
-    std::cin >> username;
+    inputAman(username, 20);
 
     // Cek apakah yang dihapus adalah admin yang sedang login
     if (strcmp(username, getCurrentUser()) == 0) {
@@ -599,8 +719,9 @@ void hapusAkunSendiri() {
     std::cout << "=== HAPUS AKUN SENDIRI ===" << std::endl;
     std::cout << "Akun Anda akan dihapus secara permanen. Data transaksi tetap tersimpan dengan username asli." << std::endl;
     std::cout << "Yakin? (y/t): ";
-    char confirm;
-    std::cin >> confirm;
+    char confirmBuf[5];
+    inputAman(confirmBuf, 5);
+    char confirm = confirmBuf[0];
     if (confirm == 'y' || confirm == 'Y') {
         const char* username = getCurrentUser();
         int idx = -1;
@@ -628,7 +749,6 @@ void hapusAkunSendiri() {
         std::cin.get();
     }
 }
-
 
 void tampilkanSemuaUser() {
     clearScreen();
@@ -690,9 +810,9 @@ void login() {
 
     while (percobaan < maxPercobaan) {
         std::cout << "Username: ";
-        std::cin >> username;
+        inputAman(username, 20);
         std::cout << "Password: ";
-        std::cin >> password;
+        inputAman(password, 20);
 
         // Cari user
         User* user = cariUserByUsername(username);
@@ -768,15 +888,32 @@ void pesanOjek() {
         return;
     }
 
+
     float jarak;
-    std::cout << "Masukkan jarak (km): ";
-    std::cin >> jarak;
-    if (jarak <= 0) {
-        std::cout << "Jarak harus lebih dari 0." << std::endl;
-        std::cin.ignore();
-        std::cin.get();
-        return;
+    bool inputValid = false;
+
+    std::cout << "Ketentuan Jarak:" << std::endl
+    << "1. Harus berupa angka" << std::endl
+    << "2. Minimal 0.1 km, maksimal 500 km" << std::endl
+    << "3. Tidak boleh mengandung huruf atau simbol" << std::endl
+    << "Masukkan jarak (km): ";
+
+    while (!inputValid) {
+        if (!inputFloat(jarak)) {
+            std::cout << "Input tidak valid. Masukkan angka saja: ";
+            continue;
+        }
+        if (jarak < 0.1f) {
+            std::cout << "Jarak terlalu kecil. Minimal 0.1 km: ";
+            continue;
+        }
+        if (jarak > 500.0f) {
+            std::cout << "Jarak terlalu besar. Maksimal 500 km: ";
+            continue;
+        }
+        inputValid = true;
     }
+}
 
     // Kumpulkan driver aktif
     char driverList[MAX_USER][20];
@@ -966,77 +1103,4 @@ void lihatSemuaTransaksiAdmin() {
     in.close();
     std::cin.ignore();
     std::cin.get();
-}
-
-
-void setColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-}
-
-// ================= HEADER =================
-void tampilHeader(string judul) {
-    clearScreen();
-    setColor(11); // cyan
-
-    cout << "========================================\n";
-
-    int spasi = (40 - judul.length()) / 2;
-    if (spasi < 0) spasi = 0;
-
-    cout << string(spasi, ' ') << judul << endl;
-
-    cout << "========================================\n";
-
-    setColor(7); // normal
-}
-
-// ================= LOADING TITIK =================
-void loading(string teks = "Loading") {
-    setColor(14); // kuning
-    cout << teks;
-
-    for (int i = 0; i < 3; i++) {
-        Sleep(400);
-        cout << ".";
-    }
-
-    cout << endl;
-    setColor(7);
-}
-
-// ================= LOADING BAR =================
-void loadingBar() {
-    setColor(10); // hijau
-    cout << "Loading: ";
-
-    for (int i = 0; i <= 20; i++) {
-        cout << char(219); // █
-        Sleep(80);
-    }
-
-    cout << " Selesai!\n";
-    setColor(7);
-    Sleep(300);
-}
-
-// ================= INPUT MENU =================
-int inputMenu(int min, int max) {
-    int pilih;
-    cout << "\nPilih menu [" << min << "-" << max << "] : ";
-    cin >> pilih;
-
-    if(cin.fail() || pilih < min || pilih > max){
-        cin.clear();
-        cin.ignore(1000, '\n');
-        return -1;
-    }
-
-    return pilih;
-}
-
-// ================= PAUSE =================
-void pause() {
-    cout << "\nTekan ENTER untuk lanjut...";
-    cin.ignore();
-    cin.get();
 }
