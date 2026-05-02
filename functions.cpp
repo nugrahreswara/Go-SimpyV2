@@ -1,8 +1,11 @@
+#define _HAS_STD_BYTE 0 
 #include "functions.h"
-#include <iostream>
-#include <iomanip>
 #include <windows.h>
+#include <iostream>
+#include "sortingsearch.h" 
+#include <limits>
 using namespace std;
+
 
 // Definisi variabel global (karena di akun.h hanya extern)
 User daftarUser[MAX_USER];
@@ -968,75 +971,74 @@ void lihatSemuaTransaksiAdmin() {
     std::cin.get();
 }
 
+#include "functions.h"
+#include <iostream>
+#include <windows.h>
+#include <limits>
 
-void setColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+using namespace std;
+
+
+void garis() {
+    cout << "=========================================\n";
 }
 
-// ================= HEADER =================
-void tampilHeader(string judul) {
-    clearScreen();
-    setColor(11); // cyan
 
-    cout << "========================================\n";
-
-    int spasi = (40 - judul.length()) / 2;
-    if (spasi < 0) spasi = 0;
-
-    cout << string(spasi, ' ') << judul << endl;
-
-    cout << "========================================\n";
-
-    setColor(7); // normal
-}
-
-// ================= LOADING TITIK =================
-void loading(string teks = "Loading") {
-    setColor(14); // kuning
-    cout << teks;
-
-    for (int i = 0; i < 3; i++) {
-        Sleep(400);
-        cout << ".";
-    }
-
+void tampilHeader(const char* judul) {
+    system("cls");
+    garis();
+    cout << "          GO-SIMPY \n";
+    garis();
+    cout << "          " << judul << endl;
+    garis();
     cout << endl;
-    setColor(7);
 }
 
-// ================= LOADING BAR =================
-void loadingBar() {
-    setColor(10); // hijau
-    cout << "Loading: ";
-
-    for (int i = 0; i <= 20; i++) {
-        cout << char(219); // █
-        Sleep(80);
+void loading(const char* text, int delay) {
+    cout << text;
+    for (int i = 0; i < 3; i++) {
+        cout << ".";
+        Sleep(delay);
     }
-
-    cout << " Selesai!\n";
-    setColor(7);
-    Sleep(300);
+    cout << endl;
 }
 
-// ================= INPUT MENU =================
+void loadingBar(const char* text, int total, int delay) {
+    cout << text << "\n[";
+    for (int i = 0; i < total; i++) {
+        cout << "#";
+        Sleep(delay);
+    }
+    cout << "]\n";
+}
+
 int inputMenu(int min, int max) {
-    int pilih;
-    cout << "\nPilih menu [" << min << "-" << max << "] : ";
-    cin >> pilih;
+    int pilihan;
 
-    if(cin.fail() || pilih < min || pilih > max){
-        cin.clear();
-        cin.ignore(1000, '\n');
-        return -1;
+    while (true) {
+        cout << "Pilih: ";
+        cin >> pilihan;
+
+        if (cin.fail()) {
+            cout << "Input harus angka!\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+
+        if (pilihan < min || pilihan > max) {
+            cout << "Pilihan harus antara " << min << " - " << max << endl;
+            continue;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return pilihan;
     }
-
-    return pilih;
 }
 
-// ================= PAUSE =================
 void pause() {
-    cout << "\nTekan ENTER untuk lanjut...";
+    cout << "\nTekan Enter...";
     cin.ignore();
     cin.get();
 }
+

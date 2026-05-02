@@ -6,6 +6,7 @@
 #include <fstream> // untuk transaksi
 #include <ctime> // untuk waktu
 #include <cstdlib> // untuk system, rand, srand
+#define _HAS_STD_BYTE 0
 
 const int MAX_USER = 100;
 
