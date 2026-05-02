@@ -250,6 +250,7 @@ void buatAkunRegistrasi(const char* role) {
     baru.aktif = true;
     strcpy(baru.role, role);
 
+    // Username
     std::cout << "Ketentuan Username: "
     << std::endl << "1. Panjang 3-15 karakter"
     << std::endl << "2. Dapat mengandung huruf, angka, _ dan -"
@@ -267,6 +268,7 @@ void buatAkunRegistrasi(const char* role) {
         inputAman(baru.username, 20);
     }
 
+    // Password
     std::cout << "Ketentuan Password:" << std::endl
     << "1. Panjang 8-20 karakter" << std::endl
     << "2. Mengandung huruf besar (A-Z)" << std::endl
@@ -280,6 +282,7 @@ void buatAkunRegistrasi(const char* role) {
         inputAman(baru.password, 20);
     }
 
+    // Nama Lengkap
     std::cout << "Ketentuan Nama Lengkap:" << std::endl
     << "1. Minimal 3 karakter, maksimal 50 karakter" << std::endl
     << "2. Harus terdiri dari minimal 2 kata" << std::endl
@@ -292,35 +295,43 @@ void buatAkunRegistrasi(const char* role) {
         std::cin.getline(baru.namaLengkap, 50);
     }
 
-    std::cout << "Nomor telepon (min 10 digit angka): ";
+    // Nomor Telepon
+    std::cout << "Nomor telepon (min 10 digit, maks 15 digit): ";
     inputAman(baru.nomorTelepon, 20);
+
     while (!validasiNomorTelepon(baru.nomorTelepon) || nomorTerdaftar(baru.nomorTelepon)) {
         if (nomorTerdaftar(baru.nomorTelepon)) {
-            std::cout << "Nomor sudah terdaftar." << std::endl;
+            std::cout << "Nomor sudah terdaftar oleh akun lain." << std::endl;
         } else {
             std::cout << "Nomor tidak valid." << std::endl;
         }
         std::cout << "Masukkan nomor telepon lagi: ";
         inputAman(baru.nomorTelepon, 20);
-    }
+}
 
+    // Email
     std::cout << "Alamat email (opsional, tekan Enter jika tidak ada): ";
     std::cin.getline(baru.alamatEmail, 50);
 
     if (strlen(baru.alamatEmail) > 0) {
-        while (!validasiEmail(baru.alamatEmail)) {
-            std::cout << "Email tidak valid. Masukkan lagi (atau kosongkan): ";
-            std::cin.getline(baru.alamatEmail, 50);
-            if (strlen(baru.alamatEmail) == 0) break;
-        }
-        if (strlen(baru.alamatEmail) > 0 && emailTerdaftar(baru.alamatEmail)) {
-            std::cout << "Email sudah terdaftar. Registrasi dibatalkan." << std::endl;
-            std::cin.ignore();
-            std::cin.get();
-            return;
+        while (true) {
+            if (!validasiEmail(baru.alamatEmail)) {
+                std::cout << "Email tidak valid. Masukkan lagi (atau kosongkan): ";
+                std::cin.getline(baru.alamatEmail, 50);
+            } else if (emailTerdaftar(baru.alamatEmail)) {
+                std::cout << "Email sudah dipakai akun lain. Masukkan lagi (atau kosongkan): ";
+                std::cin.getline(baru.alamatEmail, 50);
+            } else {
+                break;
+            }
+
+            if (strlen(baru.alamatEmail) == 0) {
+                break;
+            }
         }
     }
 
+    // Alamat
     std::cout << "Ketentuan Alamat:" << std::endl
     << "1. Minimal 5 karakter" << std::endl
     << "2. Harus mengandung minimal 1 huruf" << std::endl
@@ -403,40 +414,37 @@ void buatAkunOlehAdmin() {
     }
 
     // Nomor Telepon
-    std::cout << "Nomor telepon: ";
-    std::cin >> baru.nomorTelepon;
+    std::cout << "Nomor telepon (min 10 digit, maks 15 digit): ";
+    inputAman(baru.nomorTelepon, 20);
 
-    // Validasi inputan Nomor Telepon dan tidak boleh duplikat
     while (!validasiNomorTelepon(baru.nomorTelepon) || nomorTerdaftar(baru.nomorTelepon)) {
         if (nomorTerdaftar(baru.nomorTelepon)) {
-            std::cout << "Nomor sudah terdaftar." << std::endl;
+            std::cout << "Nomor sudah terdaftar oleh akun lain." << std::endl;
         } else {
             std::cout << "Nomor tidak valid." << std::endl;
-            std::cout << "Masukkan nomor telepon lagi: ";
-            std::cin >> baru.nomorTelepon;
         }
+        std::cout << "Masukkan nomor telepon lagi: ";
+        inputAman(baru.nomorTelepon, 20);
     }
 
     // Alamat E-Mail
-    std::cin.ignore();
-    std::cout << "Email (opsional): ";
+    std::cout << "Email (opsional, tekan Enter jika tidak ada): ";
     std::cin.getline(baru.alamatEmail, 50);
 
-    // Alamat E-Mail opsional
     if (strlen(baru.alamatEmail) > 0) {
-        while (!validasiEmail(baru.alamatEmail)) {
-            std::cout << "Alamat E-Mail tidak valid. Masukkan lagi (atau kosongkan): ";
-            std::cin.getline(baru.alamatEmail, 50);
-            if (strlen(baru.alamatEmail) == 0) {
+        while (true) {
+            if (!validasiEmail(baru.alamatEmail)) {
+                std::cout << "Email tidak valid. Masukkan lagi (atau kosongkan): ";
+                std::cin.getline(baru.alamatEmail, 50);
+            } else if (emailTerdaftar(baru.alamatEmail)) {
+                std::cout << "Email sudah dipakai akun lain. Masukkan lagi (atau kosongkan): ";
+                std::cin.getline(baru.alamatEmail, 50);
+            } else {
                 break;
             }
-        }
 
-        if (strlen(baru.alamatEmail) > 0 && emailTerdaftar(baru.alamatEmail)) {
-            std::cout << "Alamat E-Mail sudah terdaftar. Pembatalan." << std::endl;
-            std::cin.ignore();
-            std::cin.get();
-            return;
+            if (strlen(baru.alamatEmail) == 0) {
+                break;
         }
     }
 
@@ -481,22 +489,35 @@ void editProfilSendiri() {
     // Nama Lengkap
     std::cout << "Nama lengkap (" << u->namaLengkap << "): ";
     std::cin.getline(input, 100);
-    if (strlen(input) > 0 && validasiNama(input)) {
-        strcpy(u->namaLengkap, input);
-    } else if (strlen(input) > 0) {
-        std::cout << "Nama tidak valid." << std::endl;
+    if (strlen(input) > 0) {
+        while (!validasiNama(input)) {
+            std::cout << "Nama tidak valid. Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0) {
+            strcpy(u->namaLengkap, input);
+        }
     }
 
     // Username
     std::cout << "Username baru (" << u->username << "): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-        if (strcmp(input, u->username) == 0) {
-        } else if (validasiUsername(input) && !usernameTerdaftar(input)) {
+        while (strcmp(input, u->username) != 0 &&
+              (!validasiUsername(input) || usernameTerdaftar(input))) {
+            if (usernameTerdaftar(input)) {
+                std::cout << "Username sudah dipakai akun lain." << std::endl;
+            } else {
+                std::cout << "Username tidak valid." << std::endl;
+            }
+            std::cout << "Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0 && strcmp(input, u->username) != 0) {
             strcpy(u->username, input);
             setCurrentUser(input);
-        } else {
-            std::cout << "Username tidak valid/terdaftar." << std::endl;
         }
     }
 
@@ -504,11 +525,19 @@ void editProfilSendiri() {
     std::cout << "Nomor telepon (" << u->nomorTelepon << "): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-        if (strcmp(input, u->nomorTelepon) == 0) {
-        } else if (validasiNomorTelepon(input) && !nomorTerdaftar(input)) {
+        while (strcmp(input, u->nomorTelepon) != 0 &&
+              (!validasiNomorTelepon(input) || nomorTerdaftar(input))) {
+            if (nomorTerdaftar(input)) {
+                std::cout << "Nomor sudah dipakai akun lain." << std::endl;
+            } else {
+                std::cout << "Nomor tidak valid." << std::endl;
+            }
+            std::cout << "Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0 && strcmp(input, u->nomorTelepon) != 0) {
             strcpy(u->nomorTelepon, input);
-        } else {
-            std::cout << "Nomor tidak valid/terdaftar." << std::endl;
         }
     }
 
@@ -516,11 +545,19 @@ void editProfilSendiri() {
     std::cout << "Alamat E-Mail (" << u->alamatEmail << "): ";
     std::cin.getline(input, 100);
     if (strlen(input) > 0) {
-        if (strcmp(input, u->alamatEmail) == 0) {
-        } else if (validasiEmail(input) && !emailTerdaftar(input)) {
+        while (strcmp(input, u->alamatEmail) != 0 &&
+              (!validasiEmail(input) || emailTerdaftar(input))) {
+            if (emailTerdaftar(input)) {
+                std::cout << "Email sudah dipakai akun lain." << std::endl;
+            } else {
+                std::cout << "Email tidak valid." << std::endl;
+            }
+            std::cout << "Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0 && strcmp(input, u->alamatEmail) != 0) {
             strcpy(u->alamatEmail, input);
-        } else {
-            std::cout << "Alamat E-Mail tidak valid atau sudah terdaftar." << std::endl;
         }
     }
 
@@ -566,7 +603,6 @@ void editProfilOlehAdmin() {
         return;
     }
 
-    // Tampilkan semua user dulu
     tampilkanSemuaUser();
     char username[20];
     std::cout << "Masukkan username akun yang akan diedit: ";
@@ -584,45 +620,83 @@ void editProfilOlehAdmin() {
         std::cin.get();
         return;
     }
+
     User *u = &daftarUser[idx];
     std::cout << "Edit akun " << username << " (kosongkan jika tidak ingin mengubah)" << std::endl;
-    std::cin.ignore();
     char input[100];
 
     // Nama Lengkap
     std::cout << "Nama lengkap (" << u->namaLengkap << "): ";
     std::cin.getline(input, 100);
-    if (strlen(input) > 0 && validasiNama(input)) {
-        strcpy(u->namaLengkap, input);
-    } else if (strlen(input) > 0) {
-        std::cout << "Nama tidak valid." << std::endl;
+    if (strlen(input) > 0) {
+        while (!validasiNama(input)) {
+            std::cout << "Nama tidak valid. Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0) {
+            strcpy(u->namaLengkap, input);
+        }
     }
 
     // Username
     std::cout << "Username baru (" << u->username << "): ";
     std::cin.getline(input, 100);
-    if (strlen(input) > 0 && validasiUsername(input) && !usernameTerdaftar(input)) {
-        strcpy(u->username, input);
-    } else if (strlen(input) > 0) {
-        std::cout << "Username tidak valid/terdaftar." << std::endl;
+    if (strlen(input) > 0) {
+        while (strcmp(input, u->username) != 0 &&
+              (!validasiUsername(input) || usernameTerdaftar(input))) {
+            if (usernameTerdaftar(input)) {
+                std::cout << "Username sudah dipakai akun lain." << std::endl;
+            } else {
+                std::cout << "Username tidak valid." << std::endl;
+            }
+            std::cout << "Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0 && strcmp(input, u->username) != 0) {
+            strcpy(u->username, input);
+        }
     }
 
     // Nomor Telepon
     std::cout << "Nomor telepon (" << u->nomorTelepon << "): ";
     std::cin.getline(input, 100);
-    if (strlen(input) > 0 && validasiNomorTelepon(input) && !nomorTerdaftar(input)) {
-        strcpy(u->nomorTelepon, input);
-    } else if (strlen(input) > 0) {
-        std::cout << "Nomor tidak valid/terdaftar." << std::endl;
+    if (strlen(input) > 0) {
+        while (strcmp(input, u->nomorTelepon) != 0 &&
+              (!validasiNomorTelepon(input) || nomorTerdaftar(input))) {
+            if (nomorTerdaftar(input)) {
+                std::cout << "Nomor sudah dipakai akun lain." << std::endl;
+            } else {
+                std::cout << "Nomor tidak valid." << std::endl;
+            }
+            std::cout << "Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0 && strcmp(input, u->nomorTelepon) != 0) {
+            strcpy(u->nomorTelepon, input);
+        }
     }
 
     // Alamat E-Mail
     std::cout << "Alamat E-Mail (" << u->alamatEmail << "): ";
     std::cin.getline(input, 100);
-    if (strlen(input) > 0 && validasiEmail(input) && !emailTerdaftar(input)) {
-        strcpy(u->alamatEmail, input);
-    } else if (strlen(input) > 0) {
-        std::cout << "Email tidak valid/terdaftar." << std::endl;
+    if (strlen(input) > 0) {
+        while (strcmp(input, u->alamatEmail) != 0 &&
+              (!validasiEmail(input) || emailTerdaftar(input))) {
+            if (emailTerdaftar(input)) {
+                std::cout << "Email sudah dipakai akun lain." << std::endl;
+            } else {
+                std::cout << "Email tidak valid." << std::endl;
+            }
+            std::cout << "Masukkan lagi (atau kosongkan): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0 && strcmp(input, u->alamatEmail) != 0) {
+            strcpy(u->alamatEmail, input);
+        }
     }
 
     // Alamat
@@ -637,13 +711,22 @@ void editProfilOlehAdmin() {
         if (strlen(input) > 0) {
             strcpy(u->alamat, input);
         }
-}
+    }
 
     // Role
     std::cout << "Role baru (" << u->role << "): ";
     std::cin.getline(input, 100);
-    if (strlen(input) > 0 && (strcmp(input,"admin")==0 || strcmp(input,"customer")==0 || strcmp(input,"driver")==0)) {
-        strcpy(u->role, input);
+    if (strlen(input) > 0) {
+        while (strcmp(input,"admin") != 0 &&
+               strcmp(input,"customer") != 0 &&
+               strcmp(input,"driver") != 0) {
+            std::cout << "Role tidak valid. Masukkan lagi (admin/customer/driver): ";
+            std::cin.getline(input, 100);
+            if (strlen(input) == 0) break;
+        }
+        if (strlen(input) > 0) {
+            strcpy(u->role, input);
+        }
     }
 
     // Password
@@ -654,11 +737,11 @@ void editProfilOlehAdmin() {
             std::cout << "Password tidak memenuhi ketentuan. Masukkan lagi: ";
             std::cin.getline(input, 100);
             if (strlen(input) == 0) break;
-            }
-    if (strlen(input) > 0) {
-        strcpy(u->password, input);
         }
-}
+        if (strlen(input) > 0) {
+            strcpy(u->password, input);
+        }
+    }
 
     std::cout << "Akun berhasil diupdate." << std::endl;
     std::cin.ignore();
@@ -681,7 +764,6 @@ void hapusAkunOlehAdmin() {
     std::cout << "Masukkan username akun yang akan dihapus: ";
     inputAman(username, 20);
 
-    // Cek apakah yang dihapus adalah admin yang sedang login
     if (strcmp(username, getCurrentUser()) == 0) {
         std::cout << "Anda tidak dapat menghapus akun Anda sendiri di sini. Gunakan 'Hapus Akun Saya' jika ingin menghapus diri." << std::endl;
         std::cin.ignore();
