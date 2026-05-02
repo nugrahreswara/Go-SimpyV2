@@ -2,6 +2,9 @@
 #define FUNCTIONS_H
 
 #include "akun.h"
+#include <string>
+using namespace std;
+
 
 // === UTILITAS ===
 void clearScreen();
@@ -54,5 +57,12 @@ void pesanOjek();                   // customer memesan ojek
 void lihatHistoriCustomer();        // customer melihat histori pemesanan
 void lihatPendapatanDriver();       // driver melihat pendapatan
 void lihatSemuaTransaksiAdmin();    // admin melihat semua transaksi
+// UI
+void garis();
+void tampilHeader(const char* judul);
+void loading(const char* text = "Loading", int delay = 300);
+void loadingBar(const char* text = "Loading", int total = 20, int delay = 50);
+void pause();
+int inputMenu(int min, int max);
 
 #endif

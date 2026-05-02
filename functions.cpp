@@ -1,4 +1,12 @@
+#define _HAS_STD_BYTE 0 
 #include "functions.h"
+#include <windows.h>
+#include <iostream>
+#include "sortingsearch.h" 
+#include <limits>
+
+using namespace std;
+
 
 // Definisi variabel global (karena di akun.h hanya extern)
 User daftarUser[MAX_USER];
@@ -1104,3 +1112,67 @@ void lihatSemuaTransaksiAdmin() {
     std::cin.ignore();
     std::cin.get();
 }
+
+void garis() {
+    cout << "=========================================\n";
+}
+
+
+void tampilHeader(const char* judul) {
+    system("cls");
+    garis();
+    cout << "          GO-SIMPY \n";
+    garis();
+    cout << "          " << judul << endl;
+    garis();
+    cout << endl;
+}
+
+void loading(const char* text, int delay) {
+    cout << text;
+    for (int i = 0; i < 3; i++) {
+        cout << ".";
+        Sleep(delay);
+    }
+    cout << endl;
+}
+
+void loadingBar(const char* text, int total, int delay) {
+    cout << text << "\n[";
+    for (int i = 0; i < total; i++) {
+        cout << "#";
+        Sleep(delay);
+    }
+    cout << "]\n";
+}
+
+int inputMenu(int min, int max) {
+    int pilihan;
+
+    while (true) {
+        cout << "Pilih: ";
+        cin >> pilihan;
+
+        if (cin.fail()) {
+            cout << "Input harus angka!\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+
+        if (pilihan < min || pilihan > max) {
+            cout << "Pilihan harus antara " << min << " - " << max << endl;
+            continue;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return pilihan;
+    }
+}
+
+void pause() {
+    cout << "\nTekan Enter...";
+    cin.ignore();
+    cin.get();
+}
+
