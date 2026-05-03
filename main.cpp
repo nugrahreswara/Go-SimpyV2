@@ -42,18 +42,18 @@ void menuAdmin() {
     int idx = cariUserIndexByUsername(cari);
 
     if (idx != -1) {
-        cout << "Ditemukan: " << daftarUser[idx].username << endl;
+        tampilDetailUser(idx);
     } else {
         cout << "Tidak ditemukan\n";
     }
 
     pause();
-    break;
+    break;  // ← pastikan break ada di DALAM kurung kurawal
 }
         case 8:
         loading("Sorting A-Z", 150);
         sortUserByUsernameAsc();
-        cout << "Data berhasil diurutkan\n";
+        tampilSemuaUserDetail();
         pause();
         break;
             case 9: logout(); return;

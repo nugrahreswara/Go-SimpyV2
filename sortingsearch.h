@@ -3,7 +3,7 @@
 
 #include "functions.h"
 
-
+void tampilDetailUser(int idx);
 void sortUserByUsernameAsc();
 void sortUserByUsernameDesc();
 
