@@ -1,6 +1,6 @@
 #define _HAS_STD_BYTE 0
-#include "functions.h"
 #include <windows.h>
+#include "functions.h"
 #include <iostream>
 
 using namespace std;
