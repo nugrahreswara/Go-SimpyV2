@@ -1,9 +1,15 @@
 #define _HAS_STD_BYTE 0 
 #include "functions.h"
-#include <windows.h>
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 #include <iostream>
 #include "sortingsearch.h" 
 #include <limits>
+#include "tampilan.h"
+
+Lokasi daftarLokasi[MAX_LOKASI];
+int jumlahLokasi = 0;
 
 using namespace std;
 
@@ -858,18 +864,19 @@ void login() {
             sudahLogin = true;
             strcpy(currentUser, username);
             std::cout << "Login berhasil!" << std::endl;
-            std::cin.ignore();
-            std::cin.get();
+            waitEnter();
             return;
-        } else {
+        }
+
+        else {
             percobaan++;
             if (percobaan < maxPercobaan) {
                 std::cout << "Username atau password salah. Percobaan " << percobaan << " dari " << maxPercobaan << std::endl;
-                std::cin.ignore();
-                std::cin.get();
+                waitEnter();
                 clearScreen();
             } else {
                 std::cout << "Anda telah gagal login 5 kali. Program akan berhenti." << std::endl;
+                waitEnter();
                 exit(0);
             }
         }
@@ -906,50 +913,70 @@ void inisialisasiFileCSV() {
 }
 
 void pesanOjek() {
-    if (!isLogin()) {
-        return;
-    }
+    if (!isLogin()) return;
     clearScreen();
 
     // Cek ketersediaan driver
     int countDriver = 0;
     for (int i = 0; i < jumlahUser; i++) {
-        if (strcmp(daftarUser[i].role, "driver") == 0 && daftarUser[i].aktif) {
-            countDriver++;
-        }
+        if (strcmp(daftarUser[i].role, "driver") == 0 && daftarUser[i].aktif) countDriver++;
     }
-
     if (countDriver == 0) {
         std::cout << "Tidak ada driver tersedia saat ini." << std::endl;
-        std::cin.ignore();
-        std::cin.get();
+        std::cin.ignore(); std::cin.get();
         return;
     }
 
+    // Pilih mode pemesanan
+    int mode;
+    std::cout << "=== PESAN OJEK ===" << std::endl;
+    std::cout << "Pilih mode:" << std::endl;
+    std::cout << "1. Masukkan jarak langsung (km)" << std::endl;
+    std::cout << "2. Pilih lokasi (asal dan tujuan)" << std::endl;
+    std::cout << "Pilih (1/2): ";
+    std::cin >> mode;
+    if (mode != 1 && mode != 2) {
+        std::cout << "Mode tidak valid." << std::endl;
+        std::cin.ignore(); std::cin.get();
+        return;
+    }
 
-    float jarak;
-    bool inputValid = false;
+    float jarak = 0.0f;
 
-    std::cout << "Ketentuan Jarak:" << std::endl
-    << "1. Harus berupa angka" << std::endl
-    << "2. Minimal 0.1 km, maksimal 500 km" << std::endl
-    << "3. Tidak boleh mengandung huruf atau simbol" << std::endl
-    << "Masukkan jarak (km): ";
-
-    while (!inputValid) {
-        if (!inputFloat(jarak)) {
-            std::cout << "Input tidak valid. Masukkan angka saja: ";
-            continue;
+    if (mode == 1) {
+        std::cout << "Masukkan jarak (km): ";
+        std::cin >> jarak;
+        if (jarak <= 0) {
+            std::cout << "Jarak harus lebih dari 0." << std::endl;
+            std::cin.ignore(); std::cin.get();
+            return;
         }
-        if (jarak < 0.1f) {
-            std::cout << "Jarak terlalu kecil. Minimal 0.1 km: ";
-            continue;
+    } else { // mode == 2
+        // Pastikan data lokasi sudah dimuat
+        if (jumlahLokasi == 0) {
+            std::cout << "Data lokasi belum tersedia. Silakan cek file lokasi.csv." << std::endl;
+            std::cin.ignore(); std::cin.get();
+            return;
         }
-        if (jarak > 500.0f) {
-            std::cout << "Jarak terlalu besar. Maksimal 500 km: ";
-            continue;
+        tampilkanDaftarLokasi();
+        std::cin.ignore(); // membersihkan newline
+        char asal[100], tujuan[100];
+        std::cout << "Masukkan lokasi jemputan: ";
+        std::cin.getline(asal, 100);
+        std::cout << "Masukkan lokasi tujuan: ";
+        std::cin.getline(tujuan, 100);
+        if (strlen(asal) == 0 || strlen(tujuan) == 0) {
+            std::cout << "Lokasi tidak boleh kosong." << std::endl;
+            std::cin.ignore(); std::cin.get();
+            return;
         }
-        inputValid = true;
+        jarak = cariJarak(asal, tujuan);
+        if (jarak < 0) {
+            std::cout << "Pasangan lokasi tidak ditemukan dalam database." << std::endl;
+            std::cin.ignore(); std::cin.get();
+            return;
+        }
+        std::cout << "Jarak dari \"" << asal << "\" ke \"" << tujuan << "\" adalah " << jarak << " km." << std::endl;
     }
 
     // Kumpulkan driver aktif
@@ -976,12 +1003,11 @@ void pesanOjek() {
     std::ofstream out("transaksi.csv", std::ios::app);
     if (!out.is_open()) {
         std::cout << "Gagal membuka file transaksi.csv" << std::endl;
-        std::cin.ignore();
-        std::cin.get();
+        std::cin.ignore(); std::cin.get();
         return;
     }
     out << waktu << "," << getCurrentUser() << "," << driverDipilih << "," << jarak << "," << harga << std::endl;
-    out.close(); 
+    out.close();
 
     std::cout << "Pesanan berhasil!" << std::endl;
     std::cout << "Jarak: " << jarak << " km" << std::endl;
@@ -1167,4 +1193,109 @@ bool validasiAlamat(const char* alamat) {
         else if (!((c>='0'&&c<='9')||c==' '||c=='.'||c==','||c=='-'||c=='/'||c=='('||c==')')) return false;
     }
     return adaHuruf;
+}
+
+
+void normalisasiString(char* output, const char* input) {
+    int i = 0, j = 0;
+    bool prevSpasi = false;
+
+    // Hilangkan spasi di awal
+    while (input[i] == ' ') i++;
+    while (input[i] != '\0') {
+        if (input[i] == ' ') {
+            if (!prevSpasi && input[i+1] != '\0') {
+                output[j++] = ' ';
+                prevSpasi = true;
+            }
+        }
+
+        else {
+            output[j++] = tolower(input[i]);
+            prevSpasi = false;
+        }
+
+        i++;
+    }
+
+    // Hilangkan spasi di akhir
+    if (j > 0 && output[j-1] == ' ') j--;
+    output[j] = '\0';
+}
+
+void inisialisasiFileLokasi() {
+    std::ifstream file("lokasi.csv");
+    if (!file.is_open()) {
+        // buat file contoh jika belum ada
+        std::ofstream out("lokasi.csv");
+        out << "lokasi_asal,lokasi_tujuan,jarak_km" << std::endl;
+        out << "Universitas Mulawarman,Big Mall Samarinda,12.5" << std::endl;
+        out << "Universitas Mulawarman,Bandara APT Pranoto,25.3" << std::endl;
+        out << "Big Mall Samarinda,Universitas Mulawarman,12.5" << std::endl;
+        out.close();
+        file.open("lokasi.csv");
+    }
+
+    // Baca semua baris
+    char line[256];
+    bool firstLine = true;
+    jumlahLokasi = 0;
+    while (file.getline(line, 256)) {
+        if (firstLine) { firstLine = false; continue; } // skip header
+        if (strlen(line) == 0) continue;
+        char asal[100], tujuan[100];
+        float jarak;
+        char *token = strtok(line, ",");
+        if (token) strcpy(asal, token);
+        token = strtok(NULL, ",");
+        if (token) strcpy(tujuan, token);
+        token = strtok(NULL, ",");
+        if (token) jarak = atof(token);
+        // simpan
+        strcpy(daftarLokasi[jumlahLokasi].asal, asal);
+        strcpy(daftarLokasi[jumlahLokasi].tujuan, tujuan);
+        daftarLokasi[jumlahLokasi].jarak = jarak;
+        jumlahLokasi++;
+        if (jumlahLokasi >= MAX_LOKASI) break;
+    }
+    file.close();
+}
+
+float cariJarak(const char* asal, const char* tujuan) {
+    char normAsal[100], normTujuan[100];
+    normalisasiString(normAsal, asal);
+    normalisasiString(normTujuan, tujuan);
+    for (int i = 0; i < jumlahLokasi; i++) {
+        char normAsalFile[100], normTujuanFile[100];
+        normalisasiString(normAsalFile, daftarLokasi[i].asal);
+        normalisasiString(normTujuanFile, daftarLokasi[i].tujuan);
+        if (strcmp(normAsalFile, normAsal) == 0 && strcmp(normTujuanFile, normTujuan) == 0) {
+            return daftarLokasi[i].jarak;
+        }
+    }
+    return -1.0f; // tidak ditemukan
+}
+
+void tampilkanDaftarLokasi() {
+    std::cout << "Daftar lokasi yang tersedia (asal dan tujuan):" << std::endl;
+    // sederhana: tampilkan semua asal dan tujuan unik (pakai array sementara)
+    char lokasiUnik[MAX_LOKASI*2][100];
+    int jumlahUnik = 0;
+    for (int i = 0; i < jumlahLokasi; i++) {
+        // cek asal
+        bool adaAsal = false;
+        for (int j = 0; j < jumlahUnik; j++) {
+            if (strcmp(lokasiUnik[j], daftarLokasi[i].asal) == 0) { adaAsal = true; break; }
+        }
+        if (!adaAsal) strcpy(lokasiUnik[jumlahUnik++], daftarLokasi[i].asal);
+        // cek tujuan
+        bool adaTujuan = false;
+        for (int j = 0; j < jumlahUnik; j++) {
+            if (strcmp(lokasiUnik[j], daftarLokasi[i].tujuan) == 0) { adaTujuan = true; break; }
+        }
+        if (!adaTujuan) strcpy(lokasiUnik[jumlahUnik++], daftarLokasi[i].tujuan);
+    }
+    for (int i = 0; i < jumlahUnik; i++) {
+        std::cout << "- " << lokasiUnik[i] << std::endl;
+    }
 }

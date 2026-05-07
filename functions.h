@@ -1,14 +1,16 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 #include "tampilan.h"
-
 #include "akun.h"
 #include <string>
+extern Lokasi daftarLokasi[MAX_LOKASI];
+extern int jumlahLokasi;
 using namespace std;
 
 
 // === UTILITAS ===
 void clearScreen();
+
 
 // === VALIDASI ===
 bool usernameTerdaftar(const char* username);
@@ -20,8 +22,6 @@ bool validasiEmail(const char* email);
 bool validasiNama(const char* nama);
 bool validasiPassword(const char* password);
 bool validasiAlamat(const char* alamat);
-
-
 
 
 // === MANAJEMEN AKUN ===
@@ -58,10 +58,14 @@ void setCurrentUser(const char* username);
 void setLoginStatus(bool status);
 
 // === PEMESANAN (TRANSAKSI) ===
-void inisialisasiFileCSV();         // buat file transaksi.csv jika belum ada
-void pesanOjek();                   // customer memesan ojek
-void lihatHistoriCustomer();        // customer melihat histori pemesanan
-void lihatPendapatanDriver();       // driver melihat pendapatan
-void lihatSemuaTransaksiAdmin();    // admin melihat semua transaksi
+void inisialisasiFileCSV(); // buat file transaksi.csv jika belum ada
+void pesanOjek(); // customer memesan ojek
+void lihatHistoriCustomer(); // customer melihat histori pemesanan
+void lihatPendapatanDriver(); // driver melihat pendapatan
+void lihatSemuaTransaksiAdmin(); // admin melihat semua transaksi
+void inisialisasiFileLokasi(); // buat file lokasi.csv jika belum ada
+void normalisasiString(char* output, const char* input); // agar mempermudah dalam pencarian lokasi
+float cariJarak(const char* asal, const char* tujuan);
+void tampilkanDaftarLokasi();
 
 #endif

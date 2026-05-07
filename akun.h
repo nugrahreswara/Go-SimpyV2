@@ -21,6 +21,15 @@ struct User {
     bool aktif; // true jika akun masih ada dan false jika akun sudah dihapus
 };
 
+// Untuk pemesanan ojek online berdasarkan lokasi
+const int MAX_LOKASI = 200;
+
+struct Lokasi {
+    char asal[100];
+    char tujuan[100];
+    float jarak;
+};
+
 // Deklarasi variabel global 
 extern User daftarUser[MAX_USER];
 extern int jumlahUser;
