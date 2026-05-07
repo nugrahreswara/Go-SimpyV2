@@ -1,38 +1,17 @@
 #define _HAS_STD_BYTE 0
 #include "tampilan.h"
-#include <iostream>
-#include <limits>
-#include <cstring>
-#include <cstdlib>
-
 #ifdef _WIN32
     #include <windows.h>
-#else
-    #include <unistd.h>
 #endif
-
+#include <iostream>
+#include <limits>
 using namespace std;
 
-// === WARNA (Cross-platform) ===
-#ifdef _WIN32
-    static HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
-    
-    void warna(int fg) { SetConsoleTextAttribute(hCon, fg); }
-    void resetWarna()  { SetConsoleTextAttribute(hCon, 7);  }
-#else
-    void warna(int fg) {
-        switch(fg) {
-            case 14: cout << "\033[33m"; break; // kuning
-            case 11: cout << "\033[36m"; break; // cyan
-            case 10: cout << "\033[32m"; break; // hijau
-            case 12: cout << "\033[31m"; break; // merah
-            case 15: cout << "\033[37m"; break; // putih
-            case 7:  cout << "\033[0m";  break; // reset
-            default: cout << "\033[0m"; break;
-        }
-    }
-    void resetWarna() { cout << "\033[0m"; }
-#endif
+static HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+
+// === WARNA ===
+void warna(int fg) { SetConsoleTextAttribute(hCon, fg); }
+void resetWarna()  { SetConsoleTextAttribute(hCon, 7);  }
 
 #define W_KUNING  14
 #define W_CYAN    11
@@ -55,11 +34,7 @@ void garisDouble() {
 }
 
 void tampilHeader(const char* judul) {
-#ifdef _WIN32
     system("cls");
-#else
-    system("clear");
-#endif
     warna(W_KUNING);
     cout << "\n  +-----------------------------------------+\n";
     cout << "  |         GO-SIMPY  ~  Ojek Sederhana    |\n";
@@ -76,32 +51,22 @@ void tampilHeader(const char* judul) {
 }
 
 void loading(const char* text, int delay) {
-#ifdef _WIN32
     CONSOLE_CURSOR_INFO ci = {1, FALSE};
     SetConsoleCursorInfo(hCon, &ci);
-#endif
     warna(W_CYAN);
     for (int i = 0; i < 6; i++) {
         cout << "\r  " << text;
         for (int j = 0; j <= (i % 4); j++) cout << " .";
         for (int j = (i % 4); j < 4; j++) cout << "   ";
         cout << flush;
-#ifdef _WIN32
         Sleep(delay);
-#else
-        usleep(delay * 1000);
-#endif
     }
     warna(W_HIJAU);
     cout << "\r  " << text << " Selesai!            \n";
     resetWarna();
-#ifdef _WIN32
     ci.bVisible = TRUE;
     SetConsoleCursorInfo(hCon, &ci);
     Sleep(200);
-#else
-    usleep(200000);
-#endif
 }
 
 void loadingBar(const char* text, int total, int delay) {
@@ -110,11 +75,7 @@ void loadingBar(const char* text, int total, int delay) {
     warna(W_HIJAU);
     for (int i = 0; i < total; i++) {
         cout << "#" << flush;
-#ifdef _WIN32
         Sleep(delay);
-#else
-        usleep(delay * 1000);
-#endif
     }
     warna(W_CYAN);
     cout << "] Done!\n";
@@ -128,12 +89,12 @@ void menuItem(int n, const char* teks) {
     resetWarna();    cout << teks << "\n";
 }
 
-void waitEnter() {   // <-- ganti nama dari pause()
+void pause() {
     warna(W_KUNING);
     cout << "\n  Tekan Enter untuk lanjut...";
     resetWarna();
-    std::cin.ignore();
-    std::cin.get();
+    cin.ignore();
+    cin.get();
 }
 
 int inputMenu(int min, int max) {
@@ -162,7 +123,7 @@ int inputMenu(int min, int max) {
     }
 }
 
-// TAMPIL DATA USER 
+//  TAMPIL DATA USER 
 void tampilDetailUser(int idx) {
     if (idx < 0 || idx >= jumlahUser) {
         warna(W_MERAH);
@@ -175,33 +136,33 @@ void tampilDetailUser(int idx) {
     cout << "\n  +-------------------------------------+\n";
     warna(W_CYAN);
     cout << "  | ";  warna(W_PUTIH); cout << "Username  : "; warna(W_HIJAU); cout << u.username;
-    int pad = 24 - (int)strlen(u.username);
+    int pad = 24 - strlen(u.username);
     for(int i=0;i<pad;i++) cout<<" ";
     warna(W_KUNING); cout << "|\n";
 
     cout << "  | ";  warna(W_PUTIH); cout << "Nama      : "; warna(W_ABU); cout << u.namaLengkap;
-    pad = 24 - (int)strlen(u.namaLengkap);
+    pad = 24 - strlen(u.namaLengkap);
     for(int i=0;i<pad;i++) cout<<" ";
     warna(W_KUNING); cout << "|\n";
 
     cout << "  | ";  warna(W_PUTIH); cout << "Telepon   : "; warna(W_ABU); cout << u.nomorTelepon;
-    pad = 24 - (int)strlen(u.nomorTelepon);
+    pad = 24 - strlen(u.nomorTelepon);
     for(int i=0;i<pad;i++) cout<<" ";
     warna(W_KUNING); cout << "|\n";
 
-    const char* email = (strlen(u.alamatEmail) ? u.alamatEmail : "-");
+    const char* email = strlen(u.alamatEmail) ? u.alamatEmail : "-";
     cout << "  | ";  warna(W_PUTIH); cout << "Email     : "; warna(W_ABU); cout << email;
-    pad = 24 - (int)strlen(email);
+    pad = 24 - strlen(email);
     for(int i=0;i<pad;i++) cout<<" ";
     warna(W_KUNING); cout << "|\n";
 
     cout << "  | ";  warna(W_PUTIH); cout << "Alamat    : "; warna(W_ABU); cout << u.alamat;
-    pad = 24 - (int)strlen(u.alamat);
+    pad = 24 - strlen(u.alamat);
     for(int i=0;i<pad;i++) cout<<" ";
     warna(W_KUNING); cout << "|\n";
 
     cout << "  | ";  warna(W_PUTIH); cout << "Role      : "; warna(W_CYAN); cout << u.role;
-    pad = 24 - (int)strlen(u.role);
+    pad = 24 - strlen(u.role);
     for(int i=0;i<pad;i++) cout<<" ";
     warna(W_KUNING); cout << "|\n";
     cout << "  +-------------------------------------+\n";

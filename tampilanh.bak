@@ -14,7 +14,7 @@ void tampilHeader(const char* judul);
 void loading(const char* text, int delay);
 void loadingBar(const char* text, int total, int delay);
 void menuItem(int n, const char* teks);
-void waitEnter(); // ganti dari pause() -> waitEnter()
+void pause();
 int inputMenu(int min, int max);
 
 // === TAMPIL DATA ===

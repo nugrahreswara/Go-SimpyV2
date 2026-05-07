@@ -6,7 +6,7 @@
 #include "sortingsearch.h"
 using namespace std;
 
-// ================= MENU ADMIN =================
+// === MENU ADMIN ===
 void menuAdmin() {
     while (true) {
         tampilHeader("MENU ADMIN");
@@ -47,23 +47,23 @@ void menuAdmin() {
         cout << "Tidak ditemukan\n";
     }
 
-    pause();
+    waitEnter();
     break;  // ← pastikan break ada di DALAM kurung kurawal
 }
         case 8:
         loading("Sorting A-Z", 150);
         sortUserByUsernameAsc();
         tampilSemuaUserDetail();
-        pause();
+        waitEnter();
         break;
             case 9: logout(); return;
             case 10: exit(0);
-            default: cout << "Input tidak valid\n"; pause();
+            default: cout << "Input tidak valid\n"; waitEnter();
         }
     }
 }
 
-// ================= MENU CUSTOMER =================
+// === MENU CUSTOMER ===
 void menuCustomer() {
     while (true) {
         tampilHeader("MENU CUSTOMER");
@@ -84,12 +84,12 @@ void menuCustomer() {
             case 4: hapusAkunSendiri(); return;
             case 5: logout(); return;
             case 6: exit(0);
-            default: cout << "Input tidak valid\n"; pause();
+            default: cout << "Input tidak valid\n"; waitEnter();
         }
     }
 }
 
-// ================= MENU DRIVER =================
+// === MENU DRIVER ===
 void menuDriver() {
     while (true) {
         tampilHeader("MENU DRIVER");
@@ -108,12 +108,12 @@ void menuDriver() {
             case 3: hapusAkunSendiri(); return;
             case 4: logout(); return;
             case 5: exit(0);
-            default: cout << "Input tidak valid\n"; pause();
+            default: cout << "Input tidak valid\n"; waitEnter();
         }
     }
 }
 
-// ================= MAIN =================
+// === MAIN ===
 int main() {
 
     // Inisialisasi user default
@@ -125,14 +125,33 @@ int main() {
         strcpy(admin.role, "admin");
         admin.aktif = true;
         daftarUser[jumlahUser++] = admin;
+
+    // Inisialisasi user customer default
+        User customer;
+        strcpy(customer.username, "customer");
+        strcpy(customer.password, "customer");
+        strcpy(customer.namaLengkap, "Customer");
+        strcpy(customer.role, "customer");
+        customer.aktif = true;
+        daftarUser[jumlahUser++] = customer;
+
+    // Inisialisasi user driver default
+        User driver;
+        strcpy(driver.username, "driver");
+        strcpy(driver.password, "driver");
+        strcpy(driver.namaLengkap, "driver");
+        strcpy(driver.role, "driver");
+        driver.aktif = true;
+        daftarUser[jumlahUser++] = driver;
     }
 
     inisialisasiFileCSV();
+    inisialisasiFileLokasi();
     srand(time(0));
 
     while (true) {
 
-        // ===== BELUM LOGIN =====
+        // === BELUM LOGIN ===
         if (!isLogin()) {
             tampilHeader("MENU LOGIN");
 
@@ -150,11 +169,11 @@ int main() {
                 case 4: return 0;
                 default:
                     cout << "Input tidak valid\n";
-                    pause();
+                    waitEnter();
             }
         }
 
-        // ===== SUDAH LOGIN =====
+        // === SUDAH LOGIN ===
         else {
             const char* username = getCurrentUser();
             User* user = cariUserByUsername(username);
