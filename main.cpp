@@ -17,12 +17,14 @@ void menuAdmin() {
         cout << "4. Hapus Akun Lain" << endl;
         cout << "5. Lihat Semua Akun" << endl;
         cout << "6. Lihat Semua Transaksi" << endl;
-        cout << "7. Cari User" << endl;
-        cout << "8. Sort User A-Z" << endl;
-        cout << "9. Logout" << endl;
-        cout << "10. Keluar" << endl << endl;
+        cout << "7. Cari User (Linear Search)" << endl;
+        cout << "8. Cari User (Binary Search)" << endl;
+        cout << "9. Urutkan User A-Z (Ascending)" << endl;
+        cout << "10. Urutkan User Z-A (Descending)" << endl;
+        cout << "11. Logout" << endl;
+        cout << "12. Keluar" << endl << endl;
 
-        int p = inputMenu(1, 10);
+        int p = inputMenu(1, 12);
 
         switch (p) {
             case 1: editProfilSendiri(); break;
@@ -51,16 +53,52 @@ void menuAdmin() {
                 break;
             }
 
-            case 8: {
-                loading("Sorting A-Z", 150);
+            case 8: { 
+                char cari[50];
+                cout << "Masukkan username: ";
+                cin >> cari;
+                cin.ignore();
+
+                // Binary search memerlukan data terurut ASC
+                loading("Mengurutkan user (A-Z)", 100);
                 sortUserByUsernameAsc();
+                loading("Mencari user (Binary)", 150);
+                User* hasil = cariUserBinary(cari);
+
+                if (hasil != nullptr) {
+                    // Cari index untuk menampilkan detail (pakai linear search sederhana karena sudah terurut)
+                    int idx = cariUserIndexByUsername(cari);
+                    if (idx != -1) tampilDetailUser(idx);
+                } 
+
+                else {
+                    warna(12); cout << "  [!] User tidak ditemukan." << endl; resetWarna();
+                }
+
+                waitEnter();
+                break;
+            }
+
+            case 9: {
+                loading("Mengurutkan user A-Z (Ascending)", 150);
+                sortUserByUsernameAsc();
+                warna(10); cout << "  [+] Data user telah diurutkan ascending." << endl; resetWarna();
                 tampilSemuaUserDetail();
                 waitEnter();
                 break;
             }
 
-            case 9: logout(); return;
-            case 10: exit(0);
+            case 10: {
+                loading("Mengurutkan user Z-A (Descending)", 150);
+                sortUserByUsernameDesc();
+                warna(10); cout << "  [+] Data user telah diurutkan descending." << endl; resetWarna();
+                tampilSemuaUserDetail();
+                waitEnter();
+                break;
+            }
+
+            case 11: logout(); return;
+            case 12: exit(0);
             default: cout << "Input tidak valid" << endl;
             waitEnter();
         }
