@@ -172,4 +172,3 @@ Distribusikan di bawah lisensi MIT. Lihat file `LICENSE` untuk informasi lebih l
   <i>Dibuat untuk keperluan Proyek Akhir Algoritma Pemrograman Lanjut</i><br>
   <b>Go-Simpy – Simple, Fast, Reliable 🛵</b>
 </p>
-```
