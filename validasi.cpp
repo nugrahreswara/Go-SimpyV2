@@ -1,8 +1,9 @@
 #define _HAS_STD_BYTE 0
-#include "functions.h"
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include "functions.h"
+#include "utils.h"
 
 using namespace std;
 

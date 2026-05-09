@@ -11,16 +11,16 @@ void menuAdmin() {
     while (true) {
         tampilHeader("MENU ADMIN");
 
-        cout << "1. Edit Profil Saya\n";
-        cout << "2. Tambah Akun\n";
-        cout << "3. Edit Akun Lain\n";
-        cout << "4. Hapus Akun Lain\n";
-        cout << "5. Lihat Semua Akun\n";
-        cout << "6. Lihat Semua Transaksi\n";
-        cout << "7. Cari User\n";
-        cout << "8. Sort User A-Z\n";
-        cout << "9. Logout\n";
-        cout << "10. Keluar\n\n";
+        cout << "1. Edit Profil Saya" << endl;
+        cout << "2. Tambah Akun" << endl;
+        cout << "3. Edit Akun Lain" << endl;
+        cout << "4. Hapus Akun Lain" << endl;
+        cout << "5. Lihat Semua Akun" << endl;
+        cout << "6. Lihat Semua Transaksi" << endl;
+        cout << "7. Cari User" << endl;
+        cout << "8. Sort User A-Z" << endl;
+        cout << "9. Logout" << endl;
+        cout << "10. Keluar" << endl << endl;
 
         int p = inputMenu(1, 10);
 
@@ -31,34 +31,38 @@ void menuAdmin() {
             case 4: hapusAkunOlehAdmin(); break;
             case 5: tampilkanSemuaUser(); break;
             case 6: lihatSemuaTransaksiAdmin(); break;
-            case 7:
-{
-    char cari[50];
-    cout << "Masukkan username: ";
-    cin >> cari;
+            case 7: {
+                char cari[50];
+                cout << "Masukkan username: ";
+                cin >> cari;
+                cin.ignore();
+            
+                loading("Mencari user", 150);
+            
+                int idx = cariUserIndexByUsername(cari);
+            
+                if (idx != -1) {
+                    tampilDetailUser(idx);
+                } else {
+                    warna(12); cout << "  [!] User Tidak Ditemukan." << endl; resetWarna();
+                }
+            
+                waitEnter();
+                break;
+            }
 
-    loading("Mencari user", 150);
+            case 8: {
+                loading("Sorting A-Z", 150);
+                sortUserByUsernameAsc();
+                tampilSemuaUserDetail();
+                waitEnter();
+                break;
+            }
 
-    int idx = cariUserIndexByUsername(cari);
-
-    if (idx != -1) {
-        tampilDetailUser(idx);
-    } else {
-        cout << "Tidak ditemukan\n";
-    }
-
-    waitEnter();
-    break;  // ← pastikan break ada di DALAM kurung kurawal
-}
-        case 8:
-        loading("Sorting A-Z", 150);
-        sortUserByUsernameAsc();
-        tampilSemuaUserDetail();
-        waitEnter();
-        break;
             case 9: logout(); return;
             case 10: exit(0);
-            default: cout << "Input tidak valid\n"; waitEnter();
+            default: cout << "Input tidak valid" << endl;
+            waitEnter();
         }
     }
 }
@@ -68,12 +72,12 @@ void menuCustomer() {
     while (true) {
         tampilHeader("MENU CUSTOMER");
 
-        cout << "1. Edit Profil\n";
-        cout << "2. Pesan Ojek\n";
-        cout << "3. Lihat Histori\n";
-        cout << "4. Hapus Akun\n";
-        cout << "5. Logout\n";
-        cout << "6. Keluar\n\n";
+        cout << "1. Edit Profil" << endl;
+        cout << "2. Pesan Ojek" << endl;
+        cout << "3. Lihat Histori" << endl;
+        cout << "4. Hapus Akun" << endl;
+        cout << "5. Logout" << endl;
+        cout << "6. Keluar" << endl << endl;
 
         int p = inputMenu(1, 6);
 
@@ -84,7 +88,7 @@ void menuCustomer() {
             case 4: hapusAkunSendiri(); return;
             case 5: logout(); return;
             case 6: exit(0);
-            default: cout << "Input tidak valid\n"; waitEnter();
+            default: cout << "Input tidak valid" << endl; waitEnter();
         }
     }
 }
@@ -94,11 +98,11 @@ void menuDriver() {
     while (true) {
         tampilHeader("MENU DRIVER");
 
-        cout << "1. Edit Profil\n";
-        cout << "2. Lihat Pendapatan\n";
-        cout << "3. Hapus Akun\n";
-        cout << "4. Logout\n";
-        cout << "5. Keluar\n\n";
+        cout << "1. Edit Profil" << endl;
+        cout << "2. Lihat Pendapatan" << endl;
+        cout << "3. Hapus Akun" << endl;
+        cout << "4. Logout" << endl;
+        cout << "5. Keluar" << endl << endl;
 
         int p = inputMenu(1, 5);
 
@@ -108,7 +112,7 @@ void menuDriver() {
             case 3: hapusAkunSendiri(); return;
             case 4: logout(); return;
             case 5: exit(0);
-            default: cout << "Input tidak valid\n"; waitEnter();
+            default: cout << "Input tidak valid" << endl; waitEnter();
         }
     }
 }
@@ -155,10 +159,10 @@ int main() {
         if (!isLogin()) {
             tampilHeader("MENU LOGIN");
 
-            cout << "1. Login\n";
-            cout << "2. Registrasi Customer\n";
-            cout << "3. Registrasi Driver\n";
-            cout << "4. Keluar\n\n";
+            cout << "1. Login" << endl;
+            cout << "2. Registrasi Customer" << endl;
+            cout << "3. Registrasi Driver" << endl;
+            cout << "4. Keluar" << endl << endl;
 
             int p = inputMenu(1, 4);
 
@@ -168,7 +172,7 @@ int main() {
                 case 3: buatAkunRegistrasi("driver"); break;
                 case 4: return 0;
                 default:
-                    cout << "Input tidak valid\n";
+                    cout << "Input tidak valid" << endl;
                     waitEnter();
             }
         }
