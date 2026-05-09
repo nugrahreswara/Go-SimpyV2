@@ -1,12 +1,11 @@
 #ifndef AKUN_H
 #define AKUN_H
-
+#define _HAS_STD_BYTE 0
 #include <iostream>
 #include <cstring> // untuk strcpy, strcmp, dll
 #include <fstream> // untuk transaksi
 #include <ctime> // untuk waktu
 #include <cstdlib> // untuk system, rand, srand
-#define _HAS_STD_BYTE 0
 
 const int MAX_USER = 100;
 
