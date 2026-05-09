@@ -126,7 +126,7 @@ void pesanOjek() {
     time_t now = time(0);
     tm *ltm = localtime(&now);
     char waktu[50];
-    sprintf(waktu, "Tanggal: %02d-%02d-%04d Jam: %02d:%02d:%02d",
+    snprintf(waktu, sizeof(waktu), "Tanggal: %02d-%02d-%04d Jam: %02d:%02d:%02d",
             ltm->tm_mday, ltm->tm_mon+1, ltm->tm_year+1900,
             ltm->tm_hour, ltm->tm_min, ltm->tm_sec);
 
@@ -349,8 +349,14 @@ float cariJarak(const char* asal, const char* tujuan) {
 }
 
 void tampilkanDaftarLokasi() {
-    cout << "  Daftar lokasi yang tersedia (contoh):\n";
-    for (int i = 0; i < jumlahLokasi && i < 20; i++) {
-        cout << "    - " << daftarLokasi[i].asal << " -> " << daftarLokasi[i].tujuan << endl;
+    cout << "  Daftar lokasi yang tersedia (total " << jumlahLokasi << "):" << endl;
+    int batas = (jumlahLokasi < 100) ? jumlahLokasi : 100; 
+
+    for (int i = 0; i < batas; i++) {
+        cout << "    - " << daftarLokasi[i].asal << " -> " << daftarLokasi[i].tujuan << " : " << daftarLokasi[i].jarak << " km" << endl;
+    }
+
+    if (jumlahLokasi > batas) {
+        cout << "    ... dan " << (jumlahLokasi - batas) << " lokasi lainnya." << endl;
     }
 }

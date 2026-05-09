@@ -15,7 +15,7 @@ using namespace std;
 // === MANAJEMEN AKUN ===
 void buatAkunRegistrasi(const char* role) {
     char judul[40];
-    sprintf(judul, "REGISTRASI %s", role);
+    snprintf(judul, sizeof(judul), "REGISTRASI %s", role);
     tampilHeader(judul);
 
     if (jumlahUser >= MAX_USER) {
@@ -155,6 +155,7 @@ void buatAkunOlehAdmin() {
         warna(14); cout << "  Role : ";
         resetWarna();
         cin >> baru.role;
+        cin.ignore();
     }
 
     // Username 
@@ -178,6 +179,7 @@ void buatAkunOlehAdmin() {
         warna(14); cout << "  Password : ";
         resetWarna();
         cin >> baru.password;
+        cin.ignore();
     }
 
     // Nama Lengkap
@@ -282,6 +284,9 @@ void editProfilOlehAdmin() {
     warna(11); cout << endl << "  Kosongkan jika tidak ingin mengubah." << endl;
     resetWarna();
     char input[100];
+    bool isSelf = (strcmp(username, getCurrentUser()) == 0 );
+    char oldUsername[20];
+    strcpy(oldUsername, u->username);
 
     // Edit Admin Nama Lengkap
     warna(14); cout << "  Nama Lengkap (" << u->namaLengkap << ") : ";
@@ -294,6 +299,7 @@ void editProfilOlehAdmin() {
             resetWarna();
             warna(14); cout << "  Nama : "; resetWarna();
             cin.getline(input, 100);
+
             if (strlen(input) == 0) {
                 break;
             }
@@ -309,14 +315,19 @@ void editProfilOlehAdmin() {
     cin.getline(input, 100);
     if (strlen(input) > 0) {
         while (strcmp(input, u->username) != 0 && (!validasiUsername(input) || usernameTerdaftar(input))) {
-            warna(12);
-            cout << "  [!] " << (usernameTerdaftar(input) ? "Username sudah dipakai." : "Username tidak valid.") << "\n";
-            resetWarna();
+            warna(12); cout << "  [!] " << (usernameTerdaftar(input) ? "Username sudah dipakai." : "Username tidak valid.") << endl; resetWarna();
             warna(14); cout << "  Username : "; resetWarna();
             cin.getline(input, 100);
-            if (strlen(input) == 0) break;
+
+            if (strlen(input) == 0) {
+                break;
+            }
         }
-        if (strlen(input) > 0 && strcmp(input, u->username) != 0) strcpy(u->username, input);
+
+        if (strlen(input) > 0 && strcmp(input, u->username) != 0) {
+            strcpy(u->username, input);
+            if (isSelf) setCurrentUser(input);
+        }
     }
 
     warna(14); cout << "  Nomor telepon (" << u->nomorTelepon << ") : "; resetWarna();
@@ -330,6 +341,7 @@ void editProfilOlehAdmin() {
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
+
         if (strlen(input) > 0 && strcmp(input, u->nomorTelepon) != 0) strcpy(u->nomorTelepon, input);
     }
 
@@ -338,7 +350,7 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (strcmp(input, u->alamatEmail) != 0 && (!validasiEmail(input) || emailTerdaftar(input))) {
             warna(12);
-            cout << "  [!] " << (emailTerdaftar(input) ? "Email sudah dipakai." : "Email tidak valid.") << "\n";
+            cout << "  [!] " << (emailTerdaftar(input) ? "Email sudah dipakai." : "Email tidak valid.") << endl;
             resetWarna();
             warna(14); cout << "  Email : "; resetWarna();
             cin.getline(input, 100);
@@ -349,13 +361,18 @@ void editProfilOlehAdmin() {
 
     warna(14); cout << "  Alamat (" << u->alamat << ") : "; resetWarna();
     cin.getline(input, 100);
+
     if (strlen(input) > 0) {
         while (!validasiAlamat(input)) {
-            warna(12); cout << "  [!] Alamat tidak valid.\n"; resetWarna();
+            warna(12); cout << "  [!] Alamat tidak valid." << endl; resetWarna();
             warna(14); cout << "  Alamat : "; resetWarna();
             cin.getline(input, 100);
-            if (strlen(input) == 0) break;
+
+            if (strlen(input) == 0) {
+                break;
+            }
         }
+
         if (strlen(input) > 0) strcpy(u->alamat, input);
     }
 

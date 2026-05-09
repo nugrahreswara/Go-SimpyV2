@@ -7,30 +7,6 @@
 
 using namespace std;
 
-bool inputFloat(float& hasil) {
-    char buffer[20];
-    inputAman(buffer, 20);
-
-    if (strlen(buffer) == 0) return false;
-
-    bool adaTitik = false;
-    int digitCount = 0;
-    for (int i = 0; buffer[i]; i++) {
-        if (buffer[i] == '.') {
-            if (adaTitik) return false;
-            adaTitik = true;
-        } else if (buffer[i] >= '0' && buffer[i] <= '9') {
-            digitCount++;
-        } else {
-            return false;
-        }
-    }
-
-    if (digitCount == 0) return false;
-    hasil = atof(buffer);
-    return true;
-}
-
 bool usernameTerdaftar(const char* username) {
     for (int i = 0; i < jumlahUser; i++) {
         if (strcmp(daftarUser[i].username, username) == 0)
