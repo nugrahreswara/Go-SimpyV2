@@ -60,10 +60,11 @@ void tampilHeader(const char* judul) {
         system("clear");
     #endif
     warna(W_KUNING);
-    cout << "\n  +-----------------------------------------+" << endl;
-    cout << "  |         GO-SIMPY  ~  Ojek Sederhana    |" << endl;
+    cout <<
+    endl << "  +-----------------------------------------+" << endl;
+    cout << "  |         GO-SIMPY  ~  Ojek Sederhana     |" << endl;
     cout << "  +-----------------------------------------+" << endl;
-    cout << "  |  ";
+    cout << "  |";
     warna(W_PUTIH);
     cout << judul;
     int pad = 41 - (int)strlen(judul);

@@ -717,7 +717,7 @@ void setCurrentUser(const char* username) {
 void setLoginStatus(bool status) { sudahLogin = status; }
 
 void login() {
-    tampilHeader("=== LOGIN ===");
+    tampilHeader("LOGIN");
     char username[20], password[20];
     int percobaan = 0;
     const int maxPercobaan = 5;
