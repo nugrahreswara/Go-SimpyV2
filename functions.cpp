@@ -152,7 +152,7 @@ void buatAkunOlehAdmin() {
     while (strcmp(baru.role, "admin") != 0 && strcmp(baru.role, "customer") != 0 && strcmp(baru.role, "driver") != 0) {
         warna(12); cout << "  [!] Role tidak valid." << endl;
         resetWarna();
-        warna(14); cout << "  Role : ";
+        warna(14); cout << "  Role(admin/customer/driver): ";
         resetWarna();
         cin >> baru.role;
         cin.ignore();
@@ -297,7 +297,7 @@ void editProfilOlehAdmin() {
         while (!validasiNama(input)) {
             warna(12); cout << "  [!] Nama tidak valid." << endl;
             resetWarna();
-            warna(14); cout << "  Nama : "; resetWarna();
+            warna(14); cout << "  Nama Lengkap (" << u->namaLengkap << ") : "; resetWarna();
             cin.getline(input, 100);
 
             if (strlen(input) == 0) {
@@ -316,7 +316,7 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (strcmp(input, u->username) != 0 && (!validasiUsername(input) || usernameTerdaftar(input))) {
             warna(12); cout << "  [!] " << (usernameTerdaftar(input) ? "Username sudah dipakai." : "Username tidak valid.") << endl; resetWarna();
-            warna(14); cout << "  Username : "; resetWarna();
+            warna(14); cout << "  Username(" << u->username << ") : "; resetWarna();
             cin.getline(input, 100);
 
             if (strlen(input) == 0) {
@@ -337,7 +337,7 @@ void editProfilOlehAdmin() {
             warna(12);
             cout << "  [!] " << (nomorTerdaftar(input) ? "Nomor sudah dipakai." : "Nomor tidak valid.") << "\n";
             resetWarna();
-            warna(14); cout << "  Nomor : "; resetWarna();
+            warna(14); cout << "  Nomor (" << u->nomorTelepon << ") : "; resetWarna();
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
@@ -352,7 +352,7 @@ void editProfilOlehAdmin() {
             warna(12);
             cout << "  [!] " << (emailTerdaftar(input) ? "Email sudah dipakai." : "Email tidak valid.") << endl;
             resetWarna();
-            warna(14); cout << "  Email : "; resetWarna();
+            warna(14); cout << "  Email (" << u->alamatEmail << ") : "; resetWarna();
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
@@ -365,7 +365,7 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (!validasiAlamat(input)) {
             warna(12); cout << "  [!] Alamat tidak valid." << endl; resetWarna();
-            warna(14); cout << "  Alamat : "; resetWarna();
+            warna(14); cout << "  Alamat(" << u->alamat << ")  : "; resetWarna();
             cin.getline(input, 100);
 
             if (strlen(input) == 0) {
@@ -381,7 +381,7 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (strcmp(input,"admin")!=0 && strcmp(input,"customer")!=0 && strcmp(input,"driver")!=0) {
             warna(12); cout << "  [!] Role tidak valid (admin/customer/driver).\n"; resetWarna();
-            warna(14); cout << "  Role : "; resetWarna();
+            warna(14); cout << "  Role(" << u->role << ")  : "; resetWarna();
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
@@ -435,7 +435,7 @@ void editProfilSendiri() {
         while (!validasiNama(input)) {
             warna(12); cout << "  [!] Nama tidak valid." << endl;
             resetWarna();
-            warna(14); cout << "  Nama : ";
+            warna(14); cout << "  Nama Lengkap (" << u->namaLengkap << ")n : ";
             resetWarna();
             cin.getline(input, 100);
 
@@ -459,7 +459,7 @@ void editProfilSendiri() {
             warna(12);
             cout << "  [!] " << (usernameTerdaftar(input) ? "Username sudah dipakai." : "Username tidak valid.") << endl;
             resetWarna();
-            warna(14); cout << "  Username : "; resetWarna();
+            warna(14); cout << "  Username baru (" << u->username << ") : "; resetWarna();
             cin.getline(input, 100);
 
             if (strlen(input) == 0) {
@@ -483,7 +483,7 @@ void editProfilSendiri() {
             warna(12);
             cout << "  [!] " << (nomorTerdaftar(input) ? "Nomor sudah dipakai." : "Nomor tidak valid.") << endl;
             resetWarna();
-            warna(14); cout << "  Nomor : ";
+            warna(14); cout << "  Nomor telepon (" << u->nomorTelepon << ") : ";
             resetWarna();
             cin.getline(input, 100);
 
@@ -507,7 +507,7 @@ void editProfilSendiri() {
             warna(12);
             cout << "  [!] " << (emailTerdaftar(input) ? "Email sudah dipakai." : "Email tidak valid.") << endl;
             resetWarna();
-            warna(14); cout << "  Email : ";
+            warna(14); cout <<"  Email (" << u->alamatEmail << ") : ";
             resetWarna();
             cin.getline(input, 100);
 
@@ -530,7 +530,7 @@ void editProfilSendiri() {
         while (!validasiAlamat(input)) {
             warna(12); cout << "  [!] Alamat tidak valid." << endl;
             resetWarna();
-            warna(14); cout << "  Alamat : ";
+            warna(14); cout << "  Alamat (" << u->alamat << ") : ";
             resetWarna();
             cin.getline(input, 100);
 
@@ -553,7 +553,7 @@ void editProfilSendiri() {
         while (!validasiPassword(input)) {
             warna(12); cout << "  [!] Password tidak memenuhi ketentuan." << endl;
             resetWarna();
-            warna(14); cout << "  Password : ";
+            warna(14); cout << "  Password baru (kosongkan jika tidak ganti) : ";
             resetWarna();
             cin.getline(input, 100);
 
