@@ -27,6 +27,21 @@ void buatAkunRegistrasi(const char* role) {
     baru.aktif = true;
     strcpy(baru.role, role);
 
+    // Nama Lengkap
+    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
+    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
+    cout << "  2. Minimal 2 kata" << endl;
+    cout << "  3. Hanya huruf dan spasi" << endl;
+    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
+    warna(14); cout << "  Nama Lengkap : "; resetWarna();
+    cin.getline(baru.namaLengkap, 50);
+
+    while (!validasiNama(baru.namaLengkap)) {
+        warna(12); cout << "  [!] Nama tidak valid." << endl; resetWarna();
+        warna(14); cout << "  Nama Lengkap : "; resetWarna();
+        cin.getline(baru.namaLengkap, 50);
+    }
+
     // Username
     warna(11); cout << endl << "  -- KETENTUAN USERNAME --" << endl; resetWarna();
     cout << "  1. Panjang 3-15 karakter" << endl;
@@ -57,21 +72,6 @@ void buatAkunRegistrasi(const char* role) {
         warna(12); cout << "  [!] Password tidak memenuhi ketentuan." << endl; resetWarna();
         warna(14); cout << "  Password : "; resetWarna();
         inputAman(baru.password, 20);
-    }
-
-    // Nama Lengkap
-    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
-    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
-    cout << "  2. Minimal 2 kata" << endl;
-    cout << "  3. Hanya huruf dan spasi" << endl;
-    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
-    warna(14); cout << "  Nama Lengkap : "; resetWarna();
-    cin.getline(baru.namaLengkap, 50);
-
-    while (!validasiNama(baru.namaLengkap)) {
-        warna(12); cout << "  [!] Nama tidak valid." << endl; resetWarna();
-        warna(14); cout << "  Nama Lengkap : "; resetWarna();
-        cin.getline(baru.namaLengkap, 50);
     }
 
     // Nomor Telepon
@@ -159,6 +159,21 @@ void buatAkunOlehAdmin() {
         cin.ignore();
     }
 
+    // Nama Lengkap
+    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
+    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
+    cout << "  2. Minimal 2 kata" << endl;
+    cout << "  3. Hanya huruf dan spasi" << endl;
+    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
+    warna(14); cout << "  Nama Lengkap : "; resetWarna();
+    cin.getline(baru.namaLengkap, 50);
+    while (!validasiNama(baru.namaLengkap)) {
+        warna(12); cout << "  [!] Nama tidak valid." << endl;
+        resetWarna();
+        warna(14); cout << "  Nama Lengkap : "; resetWarna();
+        cin.getline(baru.namaLengkap, 50);
+    }
+
     // Username
     warna(11); cout << endl << "  -- KETENTUAN USERNAME --" << endl; resetWarna();
     cout << "  1. Panjang 3-15 karakter" << endl;
@@ -188,21 +203,6 @@ void buatAkunOlehAdmin() {
         resetWarna();
         warna(14); cout << "  Password : "; resetWarna();
         inputAman(baru.password, 20);
-    }
-
-    // Nama Lengkap
-    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
-    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
-    cout << "  2. Minimal 2 kata" << endl;
-    cout << "  3. Hanya huruf dan spasi" << endl;
-    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
-    warna(14); cout << "  Nama Lengkap : "; resetWarna();
-    cin.getline(baru.namaLengkap, 50);
-    while (!validasiNama(baru.namaLengkap)) {
-        warna(12); cout << "  [!] Nama tidak valid." << endl;
-        resetWarna();
-        warna(14); cout << "  Nama Lengkap : "; resetWarna();
-        cin.getline(baru.namaLengkap, 50);
     }
 
     // Nomor Telepon
