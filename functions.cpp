@@ -27,6 +27,21 @@ void buatAkunRegistrasi(const char* role) {
     baru.aktif = true;
     strcpy(baru.role, role);
 
+    // Nama Lengkap
+    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
+    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
+    cout << "  2. Minimal 2 kata" << endl;
+    cout << "  3. Hanya huruf dan spasi" << endl;
+    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
+    warna(14); cout << "  Nama Lengkap : "; resetWarna();
+    cin.getline(baru.namaLengkap, 50);
+
+    while (!validasiNama(baru.namaLengkap)) {
+        warna(12); cout << "  [!] Nama tidak valid." << endl; resetWarna();
+        warna(14); cout << "  Nama Lengkap : "; resetWarna();
+        cin.getline(baru.namaLengkap, 50);
+    }
+
     // Username
     warna(11); cout << endl << "  -- KETENTUAN USERNAME --" << endl; resetWarna();
     cout << "  1. Panjang 3-15 karakter" << endl;
@@ -57,21 +72,6 @@ void buatAkunRegistrasi(const char* role) {
         warna(12); cout << "  [!] Password tidak memenuhi ketentuan." << endl; resetWarna();
         warna(14); cout << "  Password : "; resetWarna();
         inputAman(baru.password, 20);
-    }
-
-    // Nama Lengkap
-    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
-    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
-    cout << "  2. Minimal 2 kata" << endl;
-    cout << "  3. Hanya huruf dan spasi" << endl;
-    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
-    warna(14); cout << "  Nama Lengkap : "; resetWarna();
-    cin.getline(baru.namaLengkap, 50);
-
-    while (!validasiNama(baru.namaLengkap)) {
-        warna(12); cout << "  [!] Nama tidak valid." << endl; resetWarna();
-        warna(14); cout << "  Nama Lengkap : "; resetWarna();
-        cin.getline(baru.namaLengkap, 50);
     }
 
     // Nomor Telepon
@@ -149,6 +149,7 @@ void buatAkunOlehAdmin() {
     // Role
     warna(14); cout << "  Role (admin/customer/driver) : "; resetWarna();
     cin >> baru.role;
+    cin.ignore();
     while (strcmp(baru.role, "admin") != 0 && strcmp(baru.role, "customer") != 0 && strcmp(baru.role, "driver") != 0) {
         warna(12); cout << "  [!] Role tidak valid." << endl;
         resetWarna();
@@ -158,96 +159,101 @@ void buatAkunOlehAdmin() {
         cin.ignore();
     }
 
-    // Username 
+    // Nama Lengkap
+    warna(11); cout << endl << "  -- KETENTUAN NAMA LENGKAP --" << endl; resetWarna();
+    cout << "  1. Minimal 3, maksimal 50 karakter" << endl;
+    cout << "  2. Minimal 2 kata" << endl;
+    cout << "  3. Hanya huruf dan spasi" << endl;
+    cout << "  4. Tidak boleh diawali/diakhiri spasi ganda" << endl;
+    warna(14); cout << "  Nama Lengkap : "; resetWarna();
+    cin.getline(baru.namaLengkap, 50);
+    while (!validasiNama(baru.namaLengkap)) {
+        warna(12); cout << "  [!] Nama tidak valid." << endl;
+        resetWarna();
+        warna(14); cout << "  Nama Lengkap : "; resetWarna();
+        cin.getline(baru.namaLengkap, 50);
+    }
+
+    // Username
+    warna(11); cout << endl << "  -- KETENTUAN USERNAME --" << endl; resetWarna();
+    cout << "  1. Panjang 3-15 karakter" << endl;
+    cout << "  2. Huruf, angka, _ dan -" << endl;
+    cout << "  3. Wajib diawali huruf" << endl;
     warna(14); cout << "  Username : "; resetWarna();
-    cin >> baru.username;
+    inputAman(baru.username, 20);
     while (!validasiUsername(baru.username) || usernameTerdaftar(baru.username)) {
         warna(12);
         cout << "  [!] " << (usernameTerdaftar(baru.username) ? "Username sudah ada." : "Username tidak valid.") << endl;
         resetWarna();
-        warna(14); cout << "  Username : ";
-        resetWarna();
-        cin >> baru.username;
+        warna(14); cout << "  Username : "; resetWarna();
+        inputAman(baru.username, 20);
     }
 
     // Password
+    warna(11); cout << endl << "  -- KETENTUAN PASSWORD --" << endl; resetWarna();
+    cout << "  1. Panjang 8-20 karakter" << endl;
+    cout << "  2. Huruf besar (A-Z)" << endl;
+    cout << "  3. Huruf kecil (a-z)" << endl;
+    cout << "  4. Angka (0-9)" << endl;
+    cout << "  5. Simbol (! @ # $ % _ - .)" << endl;
     warna(14); cout << "  Password : "; resetWarna();
-    cin >> baru.password;
+    inputAman(baru.password, 20);
     while (!validasiPassword(baru.password)) {
-        warna(12); cout << "  [!] Password tidak memenuhi ketentuan.";
+        warna(12); cout << "  [!] Password tidak memenuhi ketentuan." << endl;
         resetWarna();
-        warna(14); cout << "  Password : ";
-        resetWarna();
-        cin >> baru.password;
-        cin.ignore();
-    }
-
-    // Nama Lengkap
-    cin.ignore();
-    warna(14); cout << "  Nama Lengkap : "; resetWarna();
-    cin.getline(baru.namaLengkap, 50);
-
-    while (!validasiNama(baru.namaLengkap)) {
-        warna(12); cout << "  [!] Nama tidak valid." << endl;
-        resetWarna();
-        warna(14); cout << "  Nama Lengkap : ";
-        resetWarna();
-        cin.getline(baru.namaLengkap, 50);
+        warna(14); cout << "  Password : "; resetWarna();
+        inputAman(baru.password, 20);
     }
 
     // Nomor Telepon
-    warna(14); cout << "  Nomor Telepon : "; resetWarna();
+    warna(14); cout << endl << "  Nomor Telepon (10-15 digit) : "; resetWarna();
     inputAman(baru.nomorTelepon, 20);
-
     while (!validasiNomorTelepon(baru.nomorTelepon) || nomorTerdaftar(baru.nomorTelepon)) {
-        warna(12); cout << "  [!] " << (nomorTerdaftar(baru.nomorTelepon) ? "Nomor sudah terdaftar." : "Nomor tidak valid.") << endl; resetWarna();
+        warna(12); cout << "  [!] " << (nomorTerdaftar(baru.nomorTelepon) ? "Nomor sudah terdaftar." : "Nomor tidak valid.") << endl;
+        resetWarna();
         warna(14); cout << "  Nomor Telepon : "; resetWarna();
         inputAman(baru.nomorTelepon, 20);
     }
 
     // Alamat E-Mail
-    warna(14); cout << "  Email (opsional) : "; resetWarna();
+    warna(14); cout << "  Email (opsional, Enter jika tidak ada) : "; resetWarna();
     cin.getline(baru.alamatEmail, 50);
-
     if (strlen(baru.alamatEmail) > 0) {
         while (true) {
             if (!validasiEmail(baru.alamatEmail)) {
-                warna(12); cout << "  [!] Email tidak valid." << endl; resetWarna();
-            }
-
-            else if (emailTerdaftar(baru.alamatEmail)) {
-                warna(12); cout << "  [!] Email sudah dipakai." << endl; resetWarna();
-            }
-
-            else {
+                warna(12); cout << "  [!] Email tidak valid." << endl;
+                resetWarna();
+            } else if (emailTerdaftar(baru.alamatEmail)) {
+                warna(12); cout << "  [!] Email sudah dipakai akun lain." << endl;
+                resetWarna();
+            } else {
                 break;
             }
-
             warna(14); cout << "  Email : "; resetWarna();
             cin.getline(baru.alamatEmail, 50);
-
-            if (strlen(baru.alamatEmail) == 0) {
-                break;
-            }
+            if (strlen(baru.alamatEmail) == 0) break;
         }
     }
 
     // Alamat
+    warna(11); cout << endl << "  -- KETENTUAN ALAMAT --" << endl; resetWarna();
+    cout << "  1. Minimal 5 karakter" << endl;
+    cout << "  2. Minimal 1 huruf" << endl;
+    cout << "  3. Karakter: huruf, angka, spasi, . , - / ( )" << endl;
     warna(14); cout << "  Alamat : "; resetWarna();
     cin.getline(baru.alamat, 100);
-
     while (!validasiAlamat(baru.alamat)) {
         warna(12); cout << "  [!] Alamat tidak valid." << endl;
         resetWarna();
-        warna(14); cout << "  Alamat : ";
-        resetWarna();
+        warna(14); cout << "  Alamat : "; resetWarna();
         cin.getline(baru.alamat, 100);
     }
 
-    // Menyimpan akun
+    // Simpan Akun Baru
     daftarUser[jumlahUser++] = baru;
     loading("Menyimpan akun", 150);
-    warna(10); cout << "  [+] Akun berhasil dibuat." << endl; resetWarna();
+    warna(10); cout << "  [+] Akun berhasil dibuat." << endl;
+    resetWarna();
     waitEnter();
 }
 
@@ -316,7 +322,11 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (strcmp(input, u->username) != 0 && (!validasiUsername(input) || usernameTerdaftar(input))) {
             warna(12); cout << "  [!] " << (usernameTerdaftar(input) ? "Username sudah dipakai." : "Username tidak valid.") << endl; resetWarna();
+<<<<<<< HEAD
             warna(14); cout << "  Username(" << u->username << ") : "; resetWarna();
+=======
+            warna(14); cout << "  Username baru (" << u->username << ") : "; resetWarna();
+>>>>>>> aa4d2d5a20ce8ffab66057cc641bccc608ce7487
             cin.getline(input, 100);
 
             if (strlen(input) == 0) {
@@ -337,7 +347,11 @@ void editProfilOlehAdmin() {
             warna(12);
             cout << "  [!] " << (nomorTerdaftar(input) ? "Nomor sudah dipakai." : "Nomor tidak valid.") << "\n";
             resetWarna();
+<<<<<<< HEAD
             warna(14); cout << "  Nomor (" << u->nomorTelepon << ") : "; resetWarna();
+=======
+            warna(14); cout << "  Nomor telepon (" << u->nomorTelepon << ") : "; resetWarna();
+>>>>>>> aa4d2d5a20ce8ffab66057cc641bccc608ce7487
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
@@ -359,13 +373,18 @@ void editProfilOlehAdmin() {
         if (strlen(input) > 0 && strcmp(input, u->alamatEmail) != 0) strcpy(u->alamatEmail, input);
     }
 
+    // Alamat
     warna(14); cout << "  Alamat (" << u->alamat << ") : "; resetWarna();
     cin.getline(input, 100);
 
     if (strlen(input) > 0) {
         while (!validasiAlamat(input)) {
             warna(12); cout << "  [!] Alamat tidak valid." << endl; resetWarna();
+<<<<<<< HEAD
             warna(14); cout << "  Alamat(" << u->alamat << ")  : "; resetWarna();
+=======
+            warna(14); cout << "  Alamat (" << u->alamat << ") : "; resetWarna();
+>>>>>>> aa4d2d5a20ce8ffab66057cc641bccc608ce7487
             cin.getline(input, 100);
 
             if (strlen(input) == 0) {
@@ -381,7 +400,11 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (strcmp(input,"admin")!=0 && strcmp(input,"customer")!=0 && strcmp(input,"driver")!=0) {
             warna(12); cout << "  [!] Role tidak valid (admin/customer/driver).\n"; resetWarna();
+<<<<<<< HEAD
             warna(14); cout << "  Role(" << u->role << ")  : "; resetWarna();
+=======
+            warna(14); cout << "  Role baru (" << u->role << ") : "; resetWarna();
+>>>>>>> aa4d2d5a20ce8ffab66057cc641bccc608ce7487
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
@@ -393,7 +416,7 @@ void editProfilOlehAdmin() {
     if (strlen(input) > 0) {
         while (!validasiPassword(input)) {
             warna(12); cout << "  [!] Password tidak memenuhi ketentuan.\n"; resetWarna();
-            warna(14); cout << "  Password : "; resetWarna();
+            warna(14); cout << "  Password baru (kosongkan jika tidak ganti) : "; resetWarna();
             cin.getline(input, 100);
             if (strlen(input) == 0) break;
         }
